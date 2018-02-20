@@ -55,7 +55,13 @@ Then you can access it as all other components:
 
     sky.cib(21.) # compute emission at 21 GHz in uK_RJ
     
-it is also included in the total emission when you observe the PySM sky with an instrument, optionally with beam and bandpass    
+it is also included in the total emission when you observe the PySM sky with an instrument, optionally with beam and bandpass   
+
+To create a sky with only the new component, you can initialize a empty PySM sky:
+
+    sky = pysm.Sky()
+    sky.add_component("cib", cib)
+
 ## Example notebook
 
 * [Full example notebook](https://gist.github.com/zonca/08751497b040ec9d62ff5175573c786e)
