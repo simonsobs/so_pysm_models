@@ -56,3 +56,6 @@ Then you can access it as all other components:
     sky.cib(21.) # compute emission at 21 GHz in uK_RJ
     
 it is also included in the total emission when you observe the PySM sky with an instrument, optionally with beam and bandpass    
+## Example notebook
+
+* [Full example notebook](https://gist.github.com/zonca/08751497b040ec9d62ff5175573c786e)
