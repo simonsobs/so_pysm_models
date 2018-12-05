@@ -27,7 +27,7 @@ env:
         # The following versions are the 'default' for tests, unless
         # overridden underneath. They are defined here in order to save having
         # to repeat them for all configurations.
-        - PYTHON_VERSION=3.7
+        - PYTHON_VERSION=3.6
         - NUMPY_VERSION=stable
         - ASTROPY_VERSION=stable
         - MAIN_CMD='python setup.py'
@@ -37,7 +37,7 @@ env:
         
         # List runtime dependencies for the package that are available as conda
         # packages here.
-        - CONDA_DEPENDENCIES=''
+        - CONDA_DEPENDENCIES='healpy'
         - CONDA_DEPENDENCIES_DOC='sphinx-astropy'
         
         # List other runtime dependencies for the package that are available as
@@ -62,7 +62,7 @@ env:
 
     matrix:
         # Make sure that egg_info works without dependencies
-        - PYTHON_VERSION=3.7 SETUP_CMD='egg_info'
+        - PYTHON_VERSION=3.6 SETUP_CMD='egg_info'
 
 
 matrix:
@@ -81,9 +81,10 @@ matrix:
 
         # Check for sphinx doc build warnings - we do this first because it
         # may run for a long time
-        - os: linux
-          env: SETUP_CMD='build_docs -w'
-               CONDA_DEPENDENCIES=$CONDA_DEPENDENCIES_DOC
+        # Was failing with a matplotlib segfault, disabled
+        #- os: linux
+        #  env: SETUP_CMD='build_docs -w'
+        #       CONDA_DEPENDENCIES=$CONDA_DEPENDENCIES_DOC
 
         # Now try Astropy dev with the latest Python and LTS with Python 2.7 and 3.x.
         - os: linux
