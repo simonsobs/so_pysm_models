@@ -28,3 +28,5 @@ if sys.version_info < tuple(
 if not _ASTROPY_SETUP_:
     # For egg_info test builds to pass, put package imports here.
     pass
+
+from .dust import GaussianDust
