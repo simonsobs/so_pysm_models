@@ -12,7 +12,10 @@ class GaussianSynchrotron:
         target_nside,
         has_polarization=True,
         pixel_indices=None,
+        TT_amplitude=20.0,
+        Toffset=72.,
         EE_amplitude=4.3,
+        rTE=0.35,
         EtoB=0.5,
         alpha=-1.0,
         beta=-3.1,
@@ -50,7 +53,10 @@ class GaussianSynchrotron:
         self.target_nside = target_nside
         self.pixel_indices = pixel_indices
         self.has_polarization = has_polarization
+        self.TT_amplitude = TT_amplitude
+        self.Toffset = Toffset
         self.EE_amplitude = EE_amplitude
+        self.rTE = rTE
         self.EtoB = EtoB
         self.alpha = alpha
         self.beta = beta
@@ -70,14 +76,20 @@ class GaussianSynchrotron:
         ell = np.arange(nell)
         dl_prefac = 2 * np.pi / ((ell + 0.01) * (ell + 1))
         clZERO = np.zeros_like(ell)
-        clTT_sync = clZERO
-        clTE_sync = clZERO
+        clTT_sync = (
+            dl_prefac
+            * self.TT_amplitude
+            * ((ell + 0.1) / 80.) ** self.alpha
+            * laws.black_body_cmb(self.nu_0) ** 2
+        )
+        clTT_sync[0] = 0.
         clEE_sync = (
             dl_prefac
             * self.EE_amplitude
             * ((ell + 0.1) / 80.) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
+        clTE_sync = self.rTE*np.sqrt(clTT_sync*clEE_sync)
         BB_amplitude = self.EE_amplitude * self.EtoB
         clBB_sync = (
             dl_prefac
@@ -85,24 +97,7 @@ class GaussianSynchrotron:
             * ((ell + 0.1) / 80.) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
-        spec_sync = laws.curved_power_law(nu, self.nu_0, self.beta, self.curv)
-        clt_sync = np.zeros([3, nnu, nnu, nell])
-        clt_sync[0] = (
-            clTT_sync[None, None, :]
-            * spec_sync[:, None, None]
-            * spec_sync[None, :, None]
-        )
-        clt_sync[1] = (
-            clEE_sync[None, None, :]
-            * spec_sync[:, None, None]
-            * spec_sync[None, :, None]
-        )
-        clt_sync[2] = (
-            clBB_sync[None, None, :]
-            * spec_sync[:, None, None]
-            * spec_sync[None, :, None]
-        )
-        # Generate foreground maps
+        np.random.seed(12)
         amp_sync = np.array(
             hp.synfast(
                 [clTT_sync, clEE_sync, clBB_sync, clTE_sync, clZERO, clZERO],
@@ -112,6 +107,25 @@ class GaussianSynchrotron:
                 verbose=False,
             )
         )
+        amp_sync[0] += self.Toffset
+        lbreak_TT = 2
+        while(np.any(amp_sync[0]<0)):
+            print(lbreak_TT)
+            clTT_sync[1:lbreak_TT] = clTT_sync[lbreak_TT]
+            clTE_sync = self.rTE*np.sqrt(clTT_sync*clEE_sync)
+            np.random.seed(12)
+            amp_sync = np.array(
+                hp.synfast(
+                    [clTT_sync, clEE_sync, clBB_sync, clTE_sync, clZERO, clZERO],
+                    self.target_nside,
+                    pol=True,
+                    new=True,
+                    verbose=False,
+                )
+            )
+            amp_sync[0] += self.Toffset
+            lbreak_TT += 1
+        spec_sync = laws.curved_power_law(nu, self.nu_0, self.beta, self.curv)
         out = amp_sync[None, :, :] * spec_sync[:, None, None]
 
         # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
