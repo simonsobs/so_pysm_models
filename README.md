@@ -59,7 +59,7 @@ it is also included in the total emission when you observe the PySM sky with an 
 
 To create a sky with only the new component, you can initialize a empty PySM sky:
 
-    sky = pysm.Sky()
+    sky = pysm.Sky({})
     sky.add_component("cib", cib)
 
 ## Example notebook
