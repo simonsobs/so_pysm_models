@@ -106,7 +106,7 @@ class GaussianSynchrotron:
             * ((ell + 0.1) / 80.) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
-        clTE_sync = self.rTE*np.sqrt(clTT_sync*clEE_sync)
+        clTE_sync = self.rTE * np.sqrt(clTT_sync * clEE_sync)
         BB_amplitude = self.EE_amplitude * self.EtoB
         clBB_sync = (
             dl_prefac
@@ -114,8 +114,8 @@ class GaussianSynchrotron:
             * ((ell + 0.1) / 80.) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
-        if self.seed==None:
-            mseed = np.random.randint(0, 2**32)
+        if self.seed == None:
+            mseed = np.random.randint(0, 2 ** 32)
         else:
             mseed = self.seed
         np.random.seed(mseed)
@@ -130,9 +130,9 @@ class GaussianSynchrotron:
         )
         amp_sync[0] += self.Toffset
         lbreak_TT = 2
-        while(np.any(amp_sync[0]<0)):
+        while np.any(amp_sync[0] < 0):
             clTT_sync[1:lbreak_TT] = clTT_sync[lbreak_TT]
-            clTE_sync = self.rTE*np.sqrt(clTT_sync*clEE_sync)
+            clTE_sync = self.rTE * np.sqrt(clTT_sync * clEE_sync)
             np.random.seed(mseed)
             amp_sync = np.array(
                 hp.synfast(
