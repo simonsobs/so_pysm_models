@@ -21,7 +21,7 @@ class GaussianSynchrotron:
         beta=-3.1,
         curv=0.,
         nu_0=23.,
-        verbose=False,
+        seed=None,
     ):
         """Gaussian synchrotron model
 
@@ -29,14 +29,28 @@ class GaussianSynchrotron:
         ----------
         target_nside : int
             HEALPix NSIDE of the output maps
+        has_polarization : bool
+            whether or not to simulate also polarization maps
+            Default: True
         pixel_indices : ndarray of ints
             Outputa partial maps given HEALPix pixel indices in RING ordering
-        EE_amplitude : float
-            amplitude of the synchrotron EE power spectrum (D_ell) at the reference
+        TT_amplitude : float
+            amplitude of synchrotron TT power spectrum (D_ell) at at the reference
             frequency and ell=80, in muK^2 and thermodinamic units.
+            Default: 20 from the amplitude of PySM-s0 synchrotron model at 23GHz
+            in the region covered by SO-SAT.
+        Toffset : float
+            offset to be applied to the temperature map in muK.
+            Default: 72 from the mean value of the T PySM-s0 synch map at 23GHz
+            in the region covered by SO-SAT
+        EE_amplitude : float
+            same as TT_amplitude but for EE power spectrum.
             Default: 4.3 from the amplitude of S-PASS E-modes power spectrum at 2.3GHz
             in the region covered by SO-SAT, rescaled at 23GHz with a powerlaw with
             beta_s = -3.1
+        rTE : float
+            TE correlation factor defined as: rTE = clTE/sqrt(clTT*clEE)
+            Default: 0.35 from Planck IX 2018
         EtoB : float
             ratio between E and B-mode amplitude.
             Default: 0.5 from Krachmalnicoff et al. 2018
@@ -48,6 +62,9 @@ class GaussianSynchrotron:
             Default: 0.
         nu_0 : synchrotron reference frequency in GHz.
             Default: 23
+        seed : int
+            seed for random realization of map
+            Default: None
         """
 
         self.target_nside = target_nside
@@ -62,7 +79,7 @@ class GaussianSynchrotron:
         self.beta = beta
         self.curv = curv
         self.nu_0 = nu_0
-        self.verbose = verbose
+        self.seed = seed
 
     def signal(self, nu, **kwargs):
         """Return map in uK_RJ at given frequency or array of frequencies"""
@@ -97,7 +114,11 @@ class GaussianSynchrotron:
             * ((ell + 0.1) / 80.) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
-        np.random.seed(12)
+        if self.seed==None:
+            mseed = np.random.randint(0, 2**32)
+        else:
+            mseed = self.seed
+        np.random.seed(mseed)
         amp_sync = np.array(
             hp.synfast(
                 [clTT_sync, clEE_sync, clBB_sync, clTE_sync, clZERO, clZERO],
@@ -110,10 +131,9 @@ class GaussianSynchrotron:
         amp_sync[0] += self.Toffset
         lbreak_TT = 2
         while(np.any(amp_sync[0]<0)):
-            print(lbreak_TT)
             clTT_sync[1:lbreak_TT] = clTT_sync[lbreak_TT]
             clTE_sync = self.rTE*np.sqrt(clTT_sync*clEE_sync)
-            np.random.seed(12)
+            np.random.seed(mseed)
             amp_sync = np.array(
                 hp.synfast(
                     [clTT_sync, clEE_sync, clBB_sync, clTE_sync, clZERO, clZERO],
