@@ -2,6 +2,7 @@ name: so_pysm_models
 
 channels:
     - astropy
+    - conda-forge
 
 dependencies:
     - python>=3.6
@@ -10,5 +11,6 @@ dependencies:
     - matplotlib
     - numpy
     - sphinx-astropy
+    - healpy
 #   - pip:
 #       - dependency_from_pip
