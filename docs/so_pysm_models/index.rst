@@ -8,6 +8,7 @@ This is the documentation for so_pysm_models.
    :maxdepth: 2
    :caption: Contents:
 
+   gettingstarted
    models
 
 Reference/API
