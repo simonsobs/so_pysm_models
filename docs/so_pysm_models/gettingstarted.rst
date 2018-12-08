@@ -9,7 +9,7 @@ Requirements:
 * PySM `PySM <https://github.com/bthorne93/PySM_public>`_
 * healpy
 
-Clone the repository:
+Clone the repository::
 
     git clone https://github.com/simonsobs/so_pysm_models
     cd so_pysm_models
@@ -20,17 +20,17 @@ Example Usage
 
 This repository implements new models for PySM that can be added as additional components.
 
-For example, create and configure a component:
+For example, create and configure a component::
 
     from so_pysm_models import GaussianSynchrotron
     synchrotron = GaussianSynchrotron(target_nside = 16)
     
-Create a PySM sky and add this component:
+Create a PySM sky and add this component::
 
     sky = pysm.Sky({})
     sky.add_component("gaussian_synch", gaussian_synch)
 
-Then get a map at a specific frequency in GHz with standard PySM functionalities:
+Then get a map at a specific frequency in GHz with standard PySM functionalities::
 
     m_synch = sky.gaussian_synch(2.3)
 
