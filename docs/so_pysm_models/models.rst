@@ -7,6 +7,7 @@ Synchrotron
 The difference between stokes Q/U and I is that we want the total intensity map to be positive everywhere, meaning that the same implementation used for Q/U cannot be applied in this case.
 
 The way I bypass this problem is the following:
+
 1. I generate a power-law TT power spectrum: :math:`C_\ell \propto \ell^\alpha`
 2. I put :math:`C_\ell[0]=0`
 3. I generate a temperature map T as a gaussian realization of this power spectrum
