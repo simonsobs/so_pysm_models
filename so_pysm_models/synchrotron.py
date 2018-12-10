@@ -40,7 +40,7 @@ class GaussianSynchrotron:
             Default: 20 from the amplitude of PySM-s0 synchrotron model at 23GHz
             in the region covered by SO-SAT.
         Toffset : float
-            offset to be applied to the temperature map in muK.
+            offset to be applied to the temperature map in muK in RJ units.
             Default: 72 from the mean value of the T PySM-s0 synch map at 23GHz
             in the region covered by SO-SAT
         EE_amplitude : float
