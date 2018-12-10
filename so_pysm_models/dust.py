@@ -37,7 +37,7 @@ class GaussianDust:
         TT_amplitude : float
             amplitude of synchrotron TT power spectrum (D_ell) at at the reference
             frequency and ell=80, in muK^2 and thermodinamic units.
-            Default: 3.4e3 from the amplitude of PySM-d0 dust model at 353GHz
+            Default: 350. from the amplitude of PySM-d0 dust model at 353GHz
             in the region covered by SO-SAT.
         Toffset : float
             offset to be applied to the temperature map in muK in RJ units.
@@ -130,7 +130,6 @@ class GaussianDust:
                 verbose=False,
             )
         )
-        print('first round', np.mean(amp_dust[0]))
         amp_dust[0] = amp_dust[0]+self.Toffset
         lbreak_TT = 2
         while np.any(amp_dust[0] < 0):
@@ -146,7 +145,6 @@ class GaussianDust:
                     verbose=False,
                 )
             )
-            print(np.mean(amp_dust[0]))
             amp_dust[0] = amp_dust[0]+self.Toffset
             lbreak_TT += 1
         spec_dust = laws.modified_black_body(nu, self.nu_0, self.beta, self.temp)
