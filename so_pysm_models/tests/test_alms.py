@@ -21,7 +21,8 @@ def setup(tmpdir):
     alms = 1j * np.random.normal(size=(3, alm_size))
     alms += np.random.normal(size=(3, alm_size))
 
-    filename = os.path.join(folder, "alms.fits")
+    # str needed to support Python 3.5
+    filename = os.path.join(str(folder), "alms.fits")
     hp.write_alm(filename, alms)
     return alms, filename
 
