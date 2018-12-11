@@ -133,7 +133,6 @@ class GaussianDust:
         amp_dust[0] = amp_dust[0]+self.Toffset
         lbreak_TT = 2
         while np.any(amp_dust[0] < 0):
-            print(lbreak_TT)
             clTT_dust[1:lbreak_TT] = clTT_dust[lbreak_TT]
             clTE_dust = self.rTE * np.sqrt(clTT_dust * clEE_dust)
             np.random.seed(mseed)
