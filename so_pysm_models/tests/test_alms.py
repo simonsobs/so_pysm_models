@@ -26,3 +26,10 @@ def test_gaussian_synchrotron(tmpdir):
     m = precomputed_alms.signal(23)
 
     np.testing.assert_allclose(m, test_map)
+
+    m_multifreq = precomputed_alms.signal(np.array([1, 10, 100]))
+
+    assert m_multifreq.shape == (3, 3, hp.nside2npix(64))
+
+    for each in m_multifreq:
+        np.testing.assert_allclose(each, test_map)
