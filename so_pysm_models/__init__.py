@@ -31,3 +31,4 @@ if not _ASTROPY_SETUP_:
 
 from .synchrotron import GaussianSynchrotron
 from .dust import GaussianDust
+from .alms import PrecomputedAlms
