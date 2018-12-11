@@ -30,3 +30,4 @@ if not _ASTROPY_SETUP_:
     pass
 
 from .synchrotron import GaussianSynchrotron
+from .dust import GaussianDust
