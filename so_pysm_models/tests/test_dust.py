@@ -12,8 +12,7 @@ def test_gaussian_dust():
     test_map = hp.read_map(test_map_filename, (0, 1, 2))
 
     nside = hp.npix2nside(len(test_map[0]))
-    gaussian_dust = GaussianDust(target_nside=nside)
-    np.random.seed(12)
+    gaussian_dust = GaussianDust(target_nside=nside, seed=18)
     m = gaussian_dust.signal(353)
 
     np.testing.assert_allclose(m, test_map)
