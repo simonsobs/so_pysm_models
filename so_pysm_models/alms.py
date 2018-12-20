@@ -1,12 +1,18 @@
 import numpy as np
 import healpy as hp
+try: from pixell import curvedsky
+except: pass
 
 import pysm
 
 class PrecomputedAlms:
 
     def __init__(
-        self, target_nside, filename, input_units, has_polarization=True, pixel_indices=None
+        self, filename, input_units,
+            target_nside = None, 
+            target_shape = None,
+            target_wcs = None,
+            has_polarization=True, pixel_indices=None
     ):
         """Generic component based on Precomputed Alms
 
@@ -28,7 +34,9 @@ class PrecomputedAlms:
             Output a partial maps given HEALPix pixel indices in RING ordering
         """
 
-        self.target_nside = target_nside
+        self.nside = target_nside
+        self.shape = target_shape
+        self.wcs = target_wcs
         self.filename = filename
         self.input_units = input_units
         self.pixel_indices = pixel_indices
@@ -38,6 +46,15 @@ class PrecomputedAlms:
             hp.read_alm(self.filename, hdu=(1, 2, 3) if self.has_polarization else 1)
         )
 
+        # use tile to output the same map for all frequencies
+        if self.nside is None:
+            ncomp = 3 if self.has_polarization else 1
+            self.omap = enmap.empty( (ncomp,)+self.shape[-2:], self.wcs)
+            curvedsky.alm2map(self.alm, self.omap, spin = [0, 2], verbose = True)
+        else:
+            self.omap = hp.alm2map(self.alm, self.nside)
+        
+
     def signal(self, nu, **kwargs):
         """Return map in uK_RJ at given frequency or array of frequencies"""
 
@@ -46,10 +63,8 @@ class PrecomputedAlms:
         except TypeError:
             nnu = 1
             nu = np.array([nu])
-
-        # use tile to output the same map for all frequencies
-
-        out = np.tile(hp.alm2map(self.alm, self.target_nside), (nnu, 1, 1))
+        
+        out = np.tile(self.omap, (nnu, 1, 1))
         out *= pysm.convert_units(self.input_units, "uK_RJ", nu).reshape((nnu, 1, 1))
 
         # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
