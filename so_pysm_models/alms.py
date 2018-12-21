@@ -1,18 +1,23 @@
 import numpy as np
 import healpy as hp
-try: from pixell import curvedsky,enmap
-except: pass
+
+try:
+    from pixell import curvedsky, enmap
+except:
+    pass
 import pysm
 
-class PrecomputedAlms(object):
 
+class PrecomputedAlms(object):
     def __init__(
-        self, filename,
-            target_nside = None, 
-            target_shape = None,
-            target_wcs = None,
-            input_units="uK_RJ",
-            has_polarization=True, pixel_indices=None
+        self,
+        filename,
+        target_nside=None,
+        target_shape=None,
+        target_wcs=None,
+        input_units="uK_RJ",
+        has_polarization=True,
+        pixel_indices=None,
     ):
         """Generic component based on Precomputed Alms
 
@@ -49,8 +54,8 @@ class PrecomputedAlms(object):
         if self.nside is None:
             assert (self.shape is not None) and (self.wcs is not None)
             ncomp = 3 if self.has_polarization else 1
-            self.omap = enmap.empty( (ncomp,)+self.shape[-2:], self.wcs)
-            curvedsky.alm2map(alm, self.omap, spin = [0, 2], verbose = True)
+            self.omap = enmap.empty((ncomp,) + self.shape[-2:], self.wcs)
+            curvedsky.alm2map(alm, self.omap, spin=[0, 2], verbose=True)
         elif self.nside is not None:
             self.omap = hp.alm2map(alm, self.nside)
         else:
@@ -62,17 +67,21 @@ class PrecomputedAlms(object):
         # If nothing is specified, we default to providing an unmodulated map
         # at 148 GHz. The value 148 Ghz does not matter if the output is in
         # uK.
-        if not(modulation) and nu is None: nu = [148.]
+        if not (modulation) and nu is None:
+            nu = [148.0]
         try:
             nnu = len(nu)
         except TypeError:
             nnu = 1
             nu = np.array([nu])
-        
+
         # use tile to output the same map for all frequencies
         out = np.tile(self.omap, (nnu, 1, 1))
-        if self.wcs is not None: out = enmap.enmap(out,self.wcs)
-        out *= pysm.convert_units(self.input_units, output_units, nu).reshape((nnu, 1, 1))
+        if self.wcs is not None:
+            out = enmap.enmap(out, self.wcs)
+        out *= pysm.convert_units(self.input_units, output_units, nu).reshape(
+            (nnu, 1, 1)
+        )
 
         if modulation:
             # TODO: implement frequency dependent modulation
