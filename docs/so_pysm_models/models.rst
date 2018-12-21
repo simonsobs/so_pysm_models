@@ -29,15 +29,21 @@ Typical values for :math:`\ell_{cut}` are between :math:`\ell=4` and :math:`\ell
 The default parameters are optimized for SO-SAT observations. Meaning that the amplitudes of power spectra are normalized in the 10% sky region observed by the instrument. In particular:
 
 1. The amplitude of TT spectrum is taken from PySM-S0 model at 23GHz.
+
    TT_amplitude = 20 :math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
 2. The offset for T map is also taken from PySM-s0 model at 23GHz.
+
    Toffset = 72 :math:`\mu K`
 2. The amplitude of EE spectrum is taken from S-PASS at 2.3GHz extrapolated at 23GHz with a powerlaw with :math:`\beta_s=-3.1`
+
    EE_amplitude = 4.3 math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
 3. The TE degree of correlation is taken from Planck IX 2018
+
    rTE = 0.35
 4. ratio between B and E modes from Krachmalnicoff et al. 2018
+
    B_to_E = 0.5
 5. spectral tilt from Krachmalnicoff et al 2018
+
    alpha = -1
 6. Default value for curvature is zero
