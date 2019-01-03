@@ -9,6 +9,7 @@ import pysm
 
 
 class PrecomputedAlms(object):
+
     def __init__(
         self,
         filename,
@@ -68,7 +69,7 @@ class PrecomputedAlms(object):
         at 148 GHz. The value 148 Ghz does not matter if the output is in
         uK.
         """
-        
+
         try:
             nnu = len(nu)
         except TypeError:
