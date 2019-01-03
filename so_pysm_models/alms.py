@@ -53,22 +53,22 @@ class PrecomputedAlms(object):
 
         if self.nside is None:
             assert (self.shape is not None) and (self.wcs is not None)
-            ncomp = 3 if self.has_polarization else 1
-            self.omap = enmap.empty((ncomp,) + self.shape[-2:], self.wcs)
-            curvedsky.alm2map(alm, self.omap, spin=[0, 2], verbose=True)
+            n_comp = 3 if self.has_polarization else 1
+            self.output_map = enmap.empty((n_comp,) + self.shape[-2:], self.wcs)
+            curvedsky.alm2map(alm, self.output_map, spin=[0, 2], verbose=True)
         elif self.nside is not None:
-            self.omap = hp.alm2map(alm, self.nside)
+            self.output_map = hp.alm2map(alm, self.nside)
         else:
             raise ValueError("You must specify either nside or both of shape and wcs")
 
-    def signal(self, nu=None, modulation=True, output_units="uK_RJ", **kwargs):
-        """Return map in uK_RJ at given frequency or array of frequencies"""
+    def signal(self, nu=[148.], output_units="uK_RJ", **kwargs):
+        """Return map in uK_RJ at given frequency or array of frequencies
 
-        # If nothing is specified, we default to providing an unmodulated map
-        # at 148 GHz. The value 148 Ghz does not matter if the output is in
-        # uK.
-        if not (modulation) and nu is None:
-            nu = [148.0]
+        If nothing is specified for nu, we default to providing an unmodulated map
+        at 148 GHz. The value 148 Ghz does not matter if the output is in
+        uK.
+        """
+        
         try:
             nnu = len(nu)
         except TypeError:
@@ -76,16 +76,12 @@ class PrecomputedAlms(object):
             nu = np.array([nu])
 
         # use tile to output the same map for all frequencies
-        out = np.tile(self.omap, (nnu, 1, 1))
+        out = np.tile(self.output_map, (nnu, 1, 1))
         if self.wcs is not None:
             out = enmap.enmap(out, self.wcs)
         out *= pysm.convert_units(self.input_units, output_units, nu).reshape(
             (nnu, 1, 1)
         )
-
-        if modulation:
-            # TODO: implement frequency dependent modulation
-            pass
 
         # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
         # we return only a 2D array.
