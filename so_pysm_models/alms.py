@@ -80,7 +80,7 @@ class PrecomputedAlms(object):
         out = np.tile(self.output_map, (nnu, 1, 1))
         if self.wcs is not None:
             out = enmap.enmap(out, self.wcs)
-        out *= pysm.convert_units(self.input_units, output_units, nu).reshape(
+        out *= pysm.convert_units(self.input_units, output_units, nu).astype(np.double).reshape(
             (nnu, 1, 1)
         )
 
