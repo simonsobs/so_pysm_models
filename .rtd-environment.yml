@@ -12,5 +12,5 @@ dependencies:
     - numpy
     - sphinx-astropy
     - healpy
-#   - pip:
-#       - dependency_from_pip
+    - pip:
+        git+https://github.com/bthorne93/PySM_public.git
