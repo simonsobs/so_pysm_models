@@ -130,7 +130,7 @@ class GaussianDust:
                 verbose=False,
             )
         )
-        amp_dust[0] = amp_dust[0]+self.Toffset
+        amp_dust[0] = amp_dust[0] + self.Toffset
         lbreak_TT = 2
         while np.any(amp_dust[0] < 0):
             clTT_dust[1:lbreak_TT] = clTT_dust[lbreak_TT]
@@ -145,7 +145,7 @@ class GaussianDust:
                     verbose=False,
                 )
             )
-            amp_dust[0] = amp_dust[0]+self.Toffset
+            amp_dust[0] = amp_dust[0] + self.Toffset
             lbreak_TT += 1
         spec_dust = laws.modified_black_body(nu, self.nu_0, self.beta, self.temp)
         out = amp_dust[None, :, :] * spec_dust[:, None, None]

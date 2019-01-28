@@ -8,7 +8,8 @@ except:
 import pysm
 
 
-class PrecomputedAlms(object):
+class PrecomputedAlms:
+
     def __init__(
         self,
         filename,
@@ -68,7 +69,7 @@ class PrecomputedAlms(object):
         at 148 GHz. The value 148 Ghz does not matter if the output is in
         uK.
         """
-        
+
         try:
             nnu = len(nu)
         except TypeError:
@@ -77,7 +78,8 @@ class PrecomputedAlms(object):
 
         # use tile to output the same map for all frequencies
         out = np.tile(self.output_map, (nnu, 1, 1))
-        if self.wcs is not None: out = enmap.enmap(out, self.wcs)
+        if self.wcs is not None:
+            out = enmap.enmap(out, self.wcs)
         out = out * pysm.convert_units(self.input_units, output_units, nu).reshape(
             (nnu, 1, 1)
         ).astype(float)
