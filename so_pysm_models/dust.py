@@ -7,27 +7,22 @@ import math
 from . import laws
 
 
-def high_pass_filter(l1, l2, lmax):
-    ell = np.arange(lmax + 1)
+def create_high_pass_filter(l1, l2, lmax):
+    ell = np.arange(l1, l2)
     wl = np.zeros(len(ell))
     wl[np.where(ell >= l2)] = 1.0
-    for l in range(l1, l2):
-        wl[l] = 0.5 * (1 - np.cos(np.pi * (l - l1) / (l2 - l1)))
-    return wl
+    wl[ell] = 0.5 * (1 - np.cos(np.pi * (ell - l1) / (l2 - l1)))
 
 
-def low_pass_filter(l1, l2, lmax):
-    ell = np.arange(lmax + 1)
+def create_low_pass_filter(l1, l2, lmax):
+    ell = np.arange(l1, l2)
     wl = np.zeros(len(ell))
     wl[np.where(ell <= l1)] = 1.0
-    for l in range(l1, l2):
-        wl[l] = 0.5 * (1 - np.cos(np.pi * (l2 - l) / (l2 - l1)))
+    wl[ell] = 0.5 * (1 - np.cos(np.pi * (l2 - ell) / (l2 - l1)))
     return wl
 
 
 def apply_filter(hmap, filt):
-    import healpy as hp
-
     nside = hp.get_nside(hmap)
     lmax = 3 * nside
     filt = filt[0:lmax]
@@ -177,8 +172,8 @@ class GaussianDust:
             amp_dust[0] = amp_dust[0] + self.Toffset
             lbreak_TT += 1
         if self.target_nside > 64:
-            lpf = low_pass_filter(30, 60, 64 * 3 - 1)
-            hpf = high_pass_filter(30, 60, nell - 1)
+            lpf = create_low_pass_filter(l1=30, l2=60, lmax=64 * 3 - 1)
+            hpf = create_high_pass_filter(l1=30, l2=60, lmax=nell - 1)
             clTT_dust_hpf = clTT_dust * hpf
             amp_dust[0] = apply_filter(amp_dust[0], lpf)
             np.random.seed(mseed)
