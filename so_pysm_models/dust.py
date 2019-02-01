@@ -2,19 +2,45 @@ import numpy as np
 
 import healpy as hp
 
+import math
+
 from . import laws
 
 
-class GaussianDust:
+def create_high_pass_filter(l1, l2, lmax):
+    ell = np.arange(l1, l2)
+    wl = np.zeros(len(ell))
+    wl[np.where(ell >= l2)] = 1.0
+    wl[ell] = 0.5 * (1 - np.cos(np.pi * (ell - l1) / (l2 - l1)))
 
+
+def create_low_pass_filter(l1, l2, lmax):
+    ell = np.arange(l1, l2)
+    wl = np.zeros(len(ell))
+    wl[np.where(ell <= l1)] = 1.0
+    wl[ell] = 0.5 * (1 - np.cos(np.pi * (l2 - ell) / (l2 - l1)))
+    return wl
+
+
+def apply_filter(hmap, filt):
+    nside = hp.get_nside(hmap)
+    lmax = 3 * nside
+    filt = filt[0:lmax]
+    alm = hp.map2alm(hmap, lmax=lmax)
+    almf = hp.almxfl(alm, filt)
+    hmap_out = hp.alm2map(almf, nside)
+    return hmap_out
+
+
+class GaussianDust:
     def __init__(
         self,
         target_nside,
         has_polarization=True,
         pixel_indices=None,
-        TT_amplitude=350.,
-        Toffset=18.,
-        EE_amplitude=100.,
+        TT_amplitude=350.0,
+        Toffset=18.0,
+        EE_amplitude=100.0,
         rTE=0.35,
         EtoB=0.5,
         alpha=-0.42,
@@ -47,9 +73,6 @@ class GaussianDust:
             Amplitude of EE modes D_ell at reference frequency at ell=80
             Default: 100. from the amplitude of HFI-353 E-modes spectrum in the
             region covered by SO-SAT
-        rTE : float
-            TE correlation factor defined as: rTE = clTE/sqrt(clTT*clEE)
-            Default: 0.35 from Planck IX 2018
         EtoB: float
             ratio between E and B-mode amplitude for dust.
             Default: 0.5 from Planck 2018 IX
@@ -75,7 +98,6 @@ class GaussianDust:
         self.TT_amplitude = TT_amplitude
         self.Toffset = Toffset
         self.EE_amplitude = EE_amplitude
-        self.rTE = rTE
         self.EtoB = EtoB
         self.alpha = alpha
         self.beta = beta
@@ -98,22 +120,21 @@ class GaussianDust:
         clTT_dust = (
             dl_prefac
             * self.TT_amplitude
-            * ((ell + 0.1) / 80.) ** self.alpha
+            * ((ell + 0.1) / 80.0) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
-        clTT_dust[0] = 0.
+        clTT_dust[0] = 0.0
         clEE_dust = (
             dl_prefac
             * self.EE_amplitude
-            * ((ell + 0.1) / 80.) ** self.alpha
+            * ((ell + 0.1) / 80.0) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
-        clTE_dust = self.rTE * np.sqrt(clTT_dust * clEE_dust)
         BB_amplitude = self.EE_amplitude * self.EtoB
         clBB_dust = (
             dl_prefac
             * BB_amplitude
-            * ((ell + 0.1) / 80.) ** self.alpha
+            * ((ell + 0.1) / 80.0) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
         if self.seed == None:
@@ -121,10 +142,14 @@ class GaussianDust:
         else:
             mseed = self.seed
         np.random.seed(mseed)
+        if self.target_nside <= 64:
+            nside_temp = self.target_nside
+        else:
+            nside_temp = 64
         amp_dust = np.array(
             hp.synfast(
-                [clTT_dust, clEE_dust, clBB_dust, clTE_dust, clZERO, clZERO],
-                self.target_nside,
+                [clTT_dust, clEE_dust, clBB_dust, clZERO, clZERO, clZERO],
+                nside_temp,
                 pol=True,
                 new=True,
                 verbose=False,
@@ -134,12 +159,11 @@ class GaussianDust:
         lbreak_TT = 2
         while np.any(amp_dust[0] < 0):
             clTT_dust[1:lbreak_TT] = clTT_dust[lbreak_TT]
-            clTE_dust = self.rTE * np.sqrt(clTT_dust * clEE_dust)
             np.random.seed(mseed)
             amp_dust = np.array(
                 hp.synfast(
-                    [clTT_dust, clEE_dust, clBB_dust, clTE_dust, clZERO, clZERO],
-                    self.target_nside,
+                    [clTT_dust, clEE_dust, clBB_dust, clZERO, clZERO, clZERO],
+                    nside_temp,
                     pol=True,
                     new=True,
                     verbose=False,
@@ -147,9 +171,30 @@ class GaussianDust:
             )
             amp_dust[0] = amp_dust[0] + self.Toffset
             lbreak_TT += 1
+        if self.target_nside > 64:
+            lpf = create_low_pass_filter(l1=30, l2=60, lmax=64 * 3 - 1)
+            hpf = create_high_pass_filter(l1=30, l2=60, lmax=nell - 1)
+            clTT_dust_hpf = clTT_dust * hpf
+            amp_dust[0] = apply_filter(amp_dust[0], lpf)
+            np.random.seed(mseed)
+            amp_dust_hell = np.array(
+                hp.synfast(
+                    [clTT_dust_hpf, clEE_dust, clBB_dust, clZERO, clZERO, clZERO],
+                    self.target_nside,
+                    pol=True,
+                    new=True,
+                    verbose=False,
+                )
+            )
+            amp_dust = hp.ud_grade(amp_dust, self.target_nside)
+            amp_dust[1:3] = amp_dust[1:3] * 0.0
+            amp_dust += amp_dust_hell
+        min_map = np.min(amp_dust[0])
+        if min_map < 0:
+            Toffset_add = math.ceil(-min_map)
+            amp_dust[0] += Toffset_add
         spec_dust = laws.modified_black_body(nu, self.nu_0, self.beta, self.temp)
         out = amp_dust[None, :, :] * spec_dust[:, None, None]
-
         # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
         # we return only a 2D array.
         if len(out) == 1:
