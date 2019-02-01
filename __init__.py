@@ -16,10 +16,7 @@ class InterpolatingComponent:
         e.g. 20.fits or 20.5.fits or 00100.fits"""
 
         self.maps = {}
-        for f in os.listdir(path):
-            if f.endswith(".fits"):
-                freq = float(os.path.splitext(f)[0])
-                self.maps[freq] = os.path.join(path, f)
+        self.maps = self.get_fnames(path)
 
         self.freqs = np.array(list(self.maps.keys()))
         self.freqs.sort()
@@ -30,6 +27,15 @@ class InterpolatingComponent:
         self.interpolation_kind = interpolation_kind
         self.mpi_comm = mpi_comm
         self.verbose = verbose
+
+    def get_fnames(self,path):
+        # Override this to implement name convention
+        fnames = {}
+        for f in os.listdir(path):
+            if f.endswith(".fits"):
+                freq = float(os.path.splitext(f)[0])
+                fnames[freq] =  os.path.join(path, f) 
+        return fnames
 
     def signal(self, nu, **kwargs):
         """Return map at given frequency or array of frequencies"""
@@ -74,17 +80,17 @@ class InterpolatingComponent:
         # always use size 3 for polarization because PySM always expects IQU maps
 
         all_maps = np.zeros(
-            (len(freq_range), 3, npix),
+            (len(freq_range), 3 if self.has_polarization else 1, npix),
             dtype = np.double)
 
         for i, freq in enumerate(freq_range):
             if self.has_polarization:
                 all_maps[i] = self.read_map(freq)
+                if self.verbose:
+                    for i_pol, pol in enumerate("IQU"):
+                        print("Mean emission at {} GHz in {}: {:.4g} uK_RJ".format(freq, pol, all_maps[i][i_pol].mean()))
             else:
                 all_maps[i][0] = self.read_map(freq)
-            if self.verbose:
-                for i_pol, pol in enumerate("IQU"):
-                    print("Mean emission at {} GHz in {}: {:.4g} uK_RJ".format(freq, pol, all_maps[i][i_pol].mean()))
 
         out = interp1d(freq_range, all_maps, axis=0, kind=self.interpolation_kind)(nu)
 
@@ -104,3 +110,5 @@ class InterpolatingComponent:
                              pixel_indices=self.pixel_indices,
                              mpi_comm=self.mpi_comm)
         return m * pysm.convert_units(self.input_units, "uK_RJ", freq)
+
+
