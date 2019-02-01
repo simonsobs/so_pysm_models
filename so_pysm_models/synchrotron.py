@@ -6,26 +6,30 @@ import math
 
 from . import laws
 
+
 def high_pass_filter(l1, l2, lmax):
-    ell = np.arange(lmax+1)
+    ell = np.arange(lmax + 1)
     wl = np.zeros(len(ell))
-    wl[np.where(ell>=l2)] = 1.
+    wl[np.where(ell >= l2)] = 1.0
     for l in range(l1, l2):
-        wl[l] = 0.5*(1-np.cos(np.pi*(l-l1)/(l2-l1)))
+        wl[l] = 0.5 * (1 - np.cos(np.pi * (l - l1) / (l2 - l1)))
     return wl
 
+
 def low_pass_filter(l1, l2, lmax):
-    ell = np.arange(lmax+1)
+    ell = np.arange(lmax + 1)
     wl = np.zeros(len(ell))
-    wl[np.where(ell<=l1)] = 1.
+    wl[np.where(ell <= l1)] = 1.0
     for l in range(l1, l2):
-        wl[l] = 0.5*(1-np.cos(np.pi*(l2-l)/(l2-l1)))
+        wl[l] = 0.5 * (1 - np.cos(np.pi * (l2 - l) / (l2 - l1)))
     return wl
+
 
 def apply_filter(hmap, filt):
     import healpy as hp
+
     nside = hp.get_nside(hmap)
-    lmax = 3*nside
+    lmax = 3 * nside
     filt = filt[0:lmax]
     alm = hp.map2alm(hmap, lmax=lmax)
     almf = hp.almxfl(alm, filt)
@@ -34,21 +38,20 @@ def apply_filter(hmap, filt):
 
 
 class GaussianSynchrotron:
-
     def __init__(
         self,
         target_nside,
         has_polarization=True,
         pixel_indices=None,
         TT_amplitude=20.0,
-        Toffset=72.,
+        Toffset=72.0,
         EE_amplitude=4.3,
         rTE=0.35,
         EtoB=0.5,
         alpha=-1.0,
         beta=-3.1,
-        curv=0.,
-        nu_0=23.,
+        curv=0.0,
+        nu_0=23.0,
         seed=None,
     ):
         """Gaussian synchrotron model
@@ -123,21 +126,21 @@ class GaussianSynchrotron:
         clTT_sync = (
             dl_prefac
             * self.TT_amplitude
-            * ((ell + 0.1) / 80.) ** self.alpha
+            * ((ell + 0.1) / 80.0) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
-        clTT_sync[0] = 0.
+        clTT_sync[0] = 0.0
         clEE_sync = (
             dl_prefac
             * self.EE_amplitude
-            * ((ell + 0.1) / 80.) ** self.alpha
+            * ((ell + 0.1) / 80.0) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
         BB_amplitude = self.EE_amplitude * self.EtoB
         clBB_sync = (
             dl_prefac
             * BB_amplitude
-            * ((ell + 0.1) / 80.) ** self.alpha
+            * ((ell + 0.1) / 80.0) ** self.alpha
             * laws.black_body_cmb(self.nu_0) ** 2
         )
         if self.seed == None:
@@ -174,10 +177,10 @@ class GaussianSynchrotron:
             )
             amp_sync[0] += self.Toffset
             lbreak_TT += 1
-        if self.target_nside>64:
-            lpf = low_pass_filter(30, 60, 64*3-1)
-            hpf = high_pass_filter(30, 60, nell-1)
-            clTT_sync_hpf = clTT_sync*hpf
+        if self.target_nside > 64:
+            lpf = low_pass_filter(30, 60, 64 * 3 - 1)
+            hpf = high_pass_filter(30, 60, nell - 1)
+            clTT_sync_hpf = clTT_sync * hpf
             amp_sync[0] = apply_filter(amp_sync[0], lpf)
             np.random.seed(mseed)
             amp_sync_hell = np.array(
@@ -190,10 +193,10 @@ class GaussianSynchrotron:
                 )
             )
             amp_sync = hp.ud_grade(amp_sync, self.target_nside)
-            amp_sync[1:3] = amp_sync[1:3]*0.
+            amp_sync[1:3] = amp_sync[1:3] * 0.0
             amp_sync += amp_sync_hell
         min_map = np.min(amp_sync[0])
-        if min_map<0:
+        if min_map < 0:
             Toffset_add = math.ceil(-min_map)
             amp_sync[0] += Toffset_add
         spec_sync = laws.curved_power_law(nu, self.nu_0, self.beta, self.curv)
