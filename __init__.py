@@ -16,7 +16,7 @@ class InterpolatingComponent:
         e.g. 20.fits or 20.5.fits or 00100.fits"""
 
         self.maps = {}
-        self.maps = self.get_fnames(path)
+        self.maps = self.get_filenames(path)
 
         self.freqs = np.array(list(self.maps.keys()))
         self.freqs.sort()
@@ -28,14 +28,14 @@ class InterpolatingComponent:
         self.mpi_comm = mpi_comm
         self.verbose = verbose
 
-    def get_fnames(self,path):
+    def get_filenames(self,path):
         # Override this to implement name convention
-        fnames = {}
+        filenames = {}
         for f in os.listdir(path):
             if f.endswith(".fits"):
                 freq = float(os.path.splitext(f)[0])
-                fnames[freq] =  os.path.join(path, f) 
-        return fnames
+                filenames[freq] =  os.path.join(path, f) 
+        return filenames
 
     def signal(self, nu, **kwargs):
         """Return map at given frequency or array of frequencies"""
