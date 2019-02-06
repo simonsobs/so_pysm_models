@@ -2,16 +2,18 @@ import numpy as np
 import healpy as hp
 
 def create_high_pass_filter(l1, l2, lmax):
-    ell = np.arange(lmax+1)
-    wl = 0.5 * (1 - np.cos(np.pi * (l2 - ell) / (l2 - l1)))
-    wl[ell >= l2] = 1.0
+    ell = np.arange(l1, l2)
+    wl = np.zeros(lmax+1)
+    wl[l2:] = 1.0
+    wl[ell] = 0.5 * (1 - np.cos(np.pi * (ell - l1) / (l2 - l1)))
     return wl
 
 
 def create_low_pass_filter(l1, l2, lmax):
-    ell = np.arange(lmax+1)
-    wl = 0.5 * (1 - np.cos(np.pi * (l2 - ell) / (l2 - l1)))
-    wl[ell <= l1] = 1.0
+    ell = np.arange(l1, l2)
+    wl = np.zeros(lmax+1)
+    wl[0:l1] = 1.0
+    wl[ell] = 0.5 * (1 - np.cos(np.pi * (l2 - ell) / (l2 - l1)))
     return wl
 
 
