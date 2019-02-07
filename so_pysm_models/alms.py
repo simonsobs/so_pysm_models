@@ -12,16 +12,19 @@ class PrecomputedAlms:
     def __init__(
         self,
         filename,
+        input_units="uK_RJ",
+        input_reference_frequency_GHz=None,
         target_nside=None,
         target_shape=None,
         target_wcs=None,
         precompute_output_map=True,
-        input_units="uK_RJ",
         has_polarization=True,
         pixel_indices=None,
     ):
         """Generic component based on Precomputed Alms
 
+        Load a set of Alms from a FITS file and generate maps at the requested
+        resolution and frequency assuming the CMB black body spectrum.
         A single set of Alms is used for all frequencies requested by PySM,
         consider that PySM expects the output of components to be in uK_RJ.
 
@@ -29,6 +32,12 @@ class PrecomputedAlms:
 
         Parameters
         ----------
+        filename : string
+            Path to the input Alms in FITS format
+        input_units : string
+            Input unit strings as defined by pysm.convert_units, e.g. K_CMB, uK_RJ, MJysr
+        input_reference_frequency_GHz : float
+            If input units are K_RJ or Jysr, the reference frequency
         target_nside : int
             HEALPix NSIDE of the output maps
         precompute_output_map : bool
@@ -36,10 +45,6 @@ class PrecomputedAlms:
             if False, the object only stores the Alms and generate the map at each
             call of the signal method, this is useful to generate maps convolved
             with different beams
-        filename : string
-            Path to the input Alms in FITS format
-        input_units : string
-            Input unit strings as defined by pysm.convert_units, e.g. K_CMB, uK_RJ, MJysr
         has_polarization : bool
             whether or not to simulate also polarization maps
             Default: True
@@ -52,6 +57,11 @@ class PrecomputedAlms:
         self.wcs = target_wcs
         self.filename = filename
         self.input_units = input_units
+        if not input_units.endswith("CMB") and input_reference_frequency_GHz is None:
+            raise Exception(
+                "If the input maps are in not in K_CMB, you need to specify `input_reference_frequency_GHz`"
+            )
+        self.input_reference_frequency_GHz = input_reference_frequency_GHz
         self.pixel_indices = pixel_indices
         self.has_polarization = has_polarization
 
@@ -123,9 +133,16 @@ class PrecomputedAlms:
         out = np.tile(output_map, (nnu, 1, 1))
         if self.wcs is not None:
             out = enmap.enmap(out, self.wcs)
-        out = out * pysm.convert_units(self.input_units, output_units, nu).reshape(
-            (nnu, 1, 1)
-        ).astype(float)
+        out *= (
+            (
+                pysm.convert_units(
+                    self.input_units, "uK_CMB", self.input_reference_frequency_GHz
+                )
+                * pysm.convert_units("uK_CMB", output_units, nu)
+            )
+            .reshape((nnu, 1, 1))
+            .astype(float)
+        )
 
         # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
         # we return only a 2D array.
