@@ -7,7 +7,7 @@ from .. import GaussianSynchrotron
 
 def test_gaussian_synchrotron():
     test_map_filename = get_pkg_data_filename(
-        "data/Gaussian_synch_23GHz_uRJ_testmap.fits.zip"
+        "data/Gaussian_synch_23GHz_uRJ_testmap_ns128.fits.zip"
     )
     test_map = hp.read_map(test_map_filename, (0, 1, 2))
 
