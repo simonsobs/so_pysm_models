@@ -13,4 +13,4 @@ dependencies:
     - sphinx-astropy
     - healpy
     - pip:
-        git+https://github.com/bthorne93/PySM_public.git
+        - https://github.com/bthorne93/PySM_public/archive/master.zip
