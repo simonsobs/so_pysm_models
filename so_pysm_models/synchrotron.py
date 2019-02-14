@@ -27,6 +27,8 @@ class GaussianSynchrotron:
     ):
         """Gaussian synchrotron model
 
+        See more details at https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/models.html
+
         Parameters
         ----------
         target_nside : int

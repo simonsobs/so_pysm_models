@@ -1,6 +1,9 @@
 Summary of Models
 **********************
 
+This page contains high-level documentation about the available models,
+check the classes docstrings, or the `online documentation <https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/index.html#classes>`, for the specific arguments.
+
 GaussianSynchrotron
 ===========
 

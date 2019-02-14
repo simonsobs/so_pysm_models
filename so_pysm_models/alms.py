@@ -25,6 +25,8 @@ class PrecomputedAlms:
         A single set of Alms is used for all frequencies requested by PySM,
         consider that PySM expects the output of components to be in uK_RJ.
 
+        See more details at https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/models.html
+
         Parameters
         ----------
         target_nside : int
