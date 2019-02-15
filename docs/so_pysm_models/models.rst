@@ -109,3 +109,18 @@ The default parameters are optimized for SO-SAT observations. Meaning that the a
 5. spectral index and temperature from Planck IX 2018
 
    beta = 1.53, T=19.6 K
+
+PrecomputedAlms
+===============
+
+This class generates a PySM component based on a set of precomputed :math:`a_{\ell,m}` coefficients stored in a folder
+in FITS format.
+This is mostly targeted at simulations of the Cosmic Microwave Background, the input :math:`a_{\ell,m}` can be in
+`K_{RJ}` or `K_{CMB}` as defined in the constructor, the unit conversion is performed assuming  the `CMB` black body spectrum.
+The output unit is specified in the `signal` method, default is `\mu K_{RJ}`, as expected by `PySM`.
+In case the input is in `K_{RJ}`, it is necessary also to specify `input_reference_frequency_GHz`.
+
+The transformation between Spherical Harmonics and pixel domain can be performed either during initialization or in the
+`signal` method based on `precompute_output_map`.
+
+See the `documentation about mapsims<https://mapsims.readthedocs.io>`_ about specific simulated datasets.
