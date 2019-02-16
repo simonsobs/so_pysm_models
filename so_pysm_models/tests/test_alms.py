@@ -32,20 +32,35 @@ def test_precomputed_alms(setup):
     alms, filename = setup
 
     nside = 64
-    test_map = hp.alm2map(alms, nside=nside)
+    # we assume the original `alms` are in `K_CMB`
+    ref_freq = 40
+    test_map_K_CMB = hp.alm2map(alms, nside=nside)
+
+    alms_K_RJ = alms * pysm.convert_units("K_CMB", "K_RJ", ref_freq)
+    filename_K_RJ = filename.replace(".fits", "_RJ.fits")
+    hp.write_alm(filename_K_RJ, alms_K_RJ)
+
     precomputed_alms = PrecomputedAlms(
-        filename=filename, target_nside=nside, input_units="uK_RJ"
+        filename=filename_K_RJ,
+        target_nside=nside,
+        input_units="uK_RJ",
+        input_reference_frequency_GHz=ref_freq,
     )
     m = precomputed_alms.signal(23)
 
-    np.testing.assert_allclose(m, test_map)
+    np.testing.assert_allclose(
+        m, test_map_K_CMB * pysm.convert_units("uK_CMB", "uK_RJ", 23)
+    )
 
-    m_multifreq = precomputed_alms.signal(np.array([1, 10, 100]))
+    freqs = np.array([1, 10, 100])
+    m_multifreq = precomputed_alms.signal(freqs)
 
     assert m_multifreq.shape == (3, 3, hp.nside2npix(64))
 
-    for each in m_multifreq:
-        np.testing.assert_allclose(each, test_map)
+    for freq, m in zip(freqs, m_multifreq):
+        np.testing.assert_allclose(
+            m, test_map_K_CMB * pysm.convert_units("uK_CMB", "uK_RJ", freq)
+        )
 
 
 def test_precomputed_alms_K_CMB(setup):
