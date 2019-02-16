@@ -12,7 +12,7 @@ class PrecomputedAlms:
     def __init__(
         self,
         filename,
-        input_units="uK_RJ",
+        input_units="uK_CMB",
         input_reference_frequency_GHz=None,
         target_nside=None,
         target_shape=None,
