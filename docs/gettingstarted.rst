@@ -2,7 +2,7 @@ Getting started
 **********************
 
 Installation
-===========
+============
 
 Requirements:
 
@@ -31,7 +31,7 @@ Build docs::
     python setup.py build_docs -w
     
 Example Usage
-======
+=============
 
 This repository implements new models for PySM that can be added as additional components.
 

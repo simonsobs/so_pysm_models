@@ -5,7 +5,7 @@ This page contains high-level documentation about the available models,
 check the classes docstrings, or the `online documentation <https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/index.html#classes>`, for the specific arguments.
 
 GaussianSynchrotron
-===========
+===================
 
 This class implements Gaussian simulations for Galactic synchrotron emission.
 The inputs are a bunch of parameters defining the properties of the synchrotron power spectra, and of synchrotron Spectral Energy Distribution (SED), the output are the stokes IQU maps simulated as Gaussian random fields of the defined spectra.
@@ -36,29 +36,17 @@ if target Nside>64:
 
 The default parameters are optimized for SO-SAT observations. Meaning that the amplitudes of power spectra are normalized in the 10% sky region observed by the instrument. In particular:
 
-1. The amplitude of TT spectrum is taken from PySM-s0 model at 23GHz.
-
-   TT_amplitude = 20 :math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
-2. The offset for T map is also taken from PySM-s0 model at 23GHz.
-
-   Toffset = 72 :math:`\mu K`
-2. The amplitude of EE spectrum is taken from S-PASS at 2.3GHz extrapolated at 23GHz with a powerlaw with :math:`\beta_s=-3.1`
-
-   EE_amplitude = 4.3 math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
-3. ratio between B and E modes from Krachmalnicoff et al. 2018
-
-   B_to_E = 0.5
-4. spectral tilt from Krachmalnicoff et al 2018
-
-   alpha = -1
-5. spectral index from Planck IX 2018
-
-   beta = -3.1
-6. Default value for curvature is zero
+1. The amplitude of TT spectrum is taken from PySM-s0 model at 23GHz.  TT_amplitude = 20 :math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
+1. The offset for T map is also taken from PySM-s0 model at 23GHz.  Toffset = 72 :math:`\mu K`
+1. The amplitude of EE spectrum is taken from S-PASS at 2.3GHz extrapolated at 23GHz with a powerlaw with :math:`\beta_s=-3.1` EE_amplitude = 4.3 math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
+1. ratio between B and E modes from Krachmalnicoff et al. 2018, B_to_E = 0.5
+1. spectral tilt from Krachmalnicoff et al 2018,  alpha = -1
+1. spectral index from Planck IX 2018, beta = -3.1
+1. Default value for curvature is zero
 
 
 GaussianDust
-===========
+============
 
 This class implements Gaussian simulations for Galactic thermal dust emission.
 The inputs are a bunch of parameters defining the properties of dust power spectra, and of dust Spectral Energy Distribution (SED), the output are the stokes IQU maps simulated as Gaussian random fields of the defined spectra.
@@ -91,24 +79,12 @@ Typical values for :math:`\ell_{cut}` are between :math:`\ell=4` and :math:`\ell
 
 The default parameters are optimized for SO-SAT observations. Meaning that the amplitudes of power spectra are normalized in the 10% sky region observed by the instrument. In particular:
 
-1. The amplitude of TT spectrum is taken from PySM-d0 model at 353GHz.
-
-   TT_amplitude = 350 :math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
-2. The offset for T map is also taken from PySM-d0 model at 353GHz.
-
-   Toffset = 18 :math:`\mu K`
-2. The amplitude of EE spectrum is taken from Planck map at 353GHz
-
-   EE_amplitude = 100 math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
-3. ratio between B and E modes from Planck IX 2018
-
-   B_to_E = 0.5
-4. spectral tilt from Planck IX 2018
-
-   alpha = -0.42
-5. spectral index and temperature from Planck IX 2018
-
-   beta = 1.53, T=19.6 K
+#. The amplitude of TT spectrum is taken from PySM-d0 model at 353GHz.  TT_amplitude = 350 :math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
+#. The offset for T map is also taken from PySM-d0 model at 353GHz.  Toffset = 18 :math:`\mu K`
+#. The amplitude of EE spectrum is taken from Planck map at 353GHz, EE_amplitude = 100 math:`\mu K^2` (for :math:`D_\ell` at :math:`\ell=80`)
+#. ratio between B and E modes from Planck IX 2018, B_to_E = 0.5
+#. spectral tilt from Planck IX 2018, alpha = -0.42
+#. spectral index and temperature from Planck IX 2018, beta = 1.53, T=19.6 K
 
 PrecomputedAlms
 ===============
@@ -123,4 +99,4 @@ In case the input is in `K_{RJ}`, it is necessary also to specify `input_referen
 The transformation between Spherical Harmonics and pixel domain can be performed either during initialization or in the
 `signal` method based on `precompute_output_map`.
 
-See the `documentation about mapsims<https://mapsims.readthedocs.io>`_ about specific simulated datasets.
+See the `documentation about mapsims <https://mapsims.readthedocs.io>`_ about specific simulated datasets.
