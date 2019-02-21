@@ -11,9 +11,24 @@ Requirements:
 
 Clone the repository::
 
+    pip install https://github.com/simonsobs/so_pysm_models/archive/master.zip
+
+Development installation
+========================
+
+Clone from Github and install::
+
     git clone https://github.com/simonsobs/so_pysm_models
     cd so_pysm_models
-    pip install .
+    pip install -e .
+
+Run unit tests::
+
+    python setup.py test -V
+
+Build docs::
+
+    python setup.py build_docs -w
     
 Example Usage
 ======
