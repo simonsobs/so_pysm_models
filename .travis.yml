@@ -42,7 +42,7 @@ env:
         
         # List other runtime dependencies for the package that are available as
         # pip packages here.
-        - PIP_DEPENDENCIES='git+https://github.com/bthorne93/PySM_public.git'
+        - PIP_DEPENDENCIES='https://github.com/zonca/PySM_public/archive/pysm_light.zip'
 
         # Conda packages for affiliated packages are hosted in channel
         # "astropy" while builds for astropy LTS with recent numpy versions
