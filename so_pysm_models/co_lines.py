@@ -11,7 +11,7 @@ class COLines:
         line="10",
         include_high_galactic_latitude_clouds=False,
         polarization_fraction=0.001,
-        theta_high_galactic_latitude_deg=0.,
+        theta_high_galactic_latitude_deg=20.,
         random_seed=1234567,
         verbose=False,
         run_mcmole3d=False,
