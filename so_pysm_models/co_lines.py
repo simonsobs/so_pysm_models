@@ -27,27 +27,23 @@ class COLines:
             HEALPix NSIDE of the output maps
         has_polarization : bool
             whether or not to simulate also polarization maps
-            Default: True
         line : string 
             CO rotational transitions. 
             Accepted values : 10, 21, 32  
-            Default: 10 
         polarization_fraction: float
             polarisation fraction for polarised CO emission.
-            Default: 0.001 
         include_high_galactic_latitude_clouds: bool 
             If True it includes a simulation from MCMole3D to include 
-            high Galactic Latitude clouds. Default: False 
+            high Galactic Latitude clouds.
             (See more details at http://giuspugl.github.io/mcmole/index.html) 
         run_mcmole3d: bool 
             If True it simulates  HGL cluds by running MCMole3D, otherwise it coadds
-            a map of HGL emission. Default: False 
+            a map of HGL emission.
         random_seed: int 
             set random seed for mcmole3d simulations. 
         theta_high_galactic_latitude_deg : float
             Angle in degree  to identify High Galactic Latitude clouds 
             (i.e. clouds whose latitude b is |b|> theta_high_galactic_latitude_deg). 
-            Default: 0 
         """
 
         self.line = line
