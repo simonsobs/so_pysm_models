@@ -116,8 +116,9 @@ class COLines:
         cospolangle = np.cos(2. * polangle)
         sinpolangle = np.sin(2. * polangle)
 
-        Q_map = self.polarization_fraction * depolmap * cospolangle * I_map
-        U_map = self.polarization_fraction * depolmap * sinpolangle * I_map
+        P_map = self.polarization_fraction * depolmap * I_map
+        Q_map = P_map * cospolangle
+        U_map = P_map * sinpolangle
         return Q_map, U_map
 
     def simulate_high_galactic_latitude_CO(self):
