@@ -5,8 +5,6 @@ import os
 from astropy.utils import data
 from pysm.common import read_map, loadtxt
 
-data_dir = os.path.join(os.path.dirname(__file__), 'so_template')
-template = lambda x: os.path.join(data_dir, x)
 DATAURL = "http://portal.nersc.gov/project/cmb/so_pysm_models_data/"
 
 def get_data_from_url(filename):
@@ -15,22 +13,21 @@ def get_data_from_url(filename):
         map_out = data.get_pkg_data_filename(filename)
     return map_out
 
-def models(key, nside, pixel_indices=None, mpi_comm=None, small_scale=False):
-     model = eval(key)(nside, pixel_indices=pixel_indices, mpi_comm=mpi_comm, small_scale=small_scale)
-     for m in model:
-         m['pixel_indices'] = pixel_indices # include pixel indices in the model dictionary
-         m['nside'] = nside
-     return model
-
-def SO_d0(nside, pixel_indices=None, mpi_comm=None, small_scale=False):
+def so_models(key, nside, pixel_indices=None, mpi_comm=None, small_scale=False):
     if small_scale:
-        T_map = get_data_from_url('dust_T_ns4096.fits')
-        Q_map = get_data_from_url('dust_Q_ns4096.fits')
-        U_map = get_data_from_url('dust_U_ns4096.fits')
+        nside_template = 4096
     else:
-        T_map = template('dust_T_ns512.fits')
-        Q_map = template('dust_Q_ns512.fits')
-        U_map = template('dust_U_ns512.fits')
+        nside_template = 512
+    model = eval(key)(nside, pixel_indices=pixel_indices, mpi_comm=mpi_comm, nside_template=nside_template)
+    for m in model:
+        m['pixel_indices'] = pixel_indices # include pixel indices in the model dictionary
+        m['nside'] = nside
+    return model
+
+def SO_d0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+    T_map = get_data_from_url('dust_T_ns{}.fits'.format(nside_template))
+    Q_map = get_data_from_url('dust_Q_ns{}.fits'.format(nside_template))
+    U_map = get_data_from_url('dust_U_ns{}.fits'.format(nside_template))
     A_I = read_map(T_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm)
     return [{
         'model': 'modified_black_body',
@@ -44,15 +41,10 @@ def SO_d0(nside, pixel_indices=None, mpi_comm=None, small_scale=False):
         'add_decorrelation': False,
     }]
 
-def SO_s0(nside, pixel_indices=None, mpi_comm=None, small_scale=False):
-    if small_scale:
-        T_map = get_data_from_url('synch_T_ns4096.fits')
-        Q_map = get_data_from_url('synch_Q_ns4096.fits')
-        U_map = get_data_from_url('synch_U_ns4096.fits')
-    else:
-        T_map = template('synch_T_ns512.fits')
-        Q_map = template('synch_Q_ns512.fits')
-        U_map = template('synch_U_ns512.fits')
+def SO_s0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+    T_map = get_data_from_url('synch_T_ns{}.fits'.format(nside_template))
+    Q_map = get_data_from_url('synch_Q_ns{}.fits'.format(nside_template))
+    U_map = get_data_from_url('synch_U_ns{}.fits'.format(nside_template))
     A_I = read_map(T_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm)
     return [{
         'model': 'power_law',
@@ -64,11 +56,8 @@ def SO_s0(nside, pixel_indices=None, mpi_comm=None, small_scale=False):
         'spectral_index': np.ones(len(A_I)) * -3.1,
     }]
 
-def SO_f0(nside, pixel_indices=None, mpi_comm=None, small_scale=False):
-    if small_scale:
-        T_map = get_data_from_url('freefree_T_ns4096.fits')
-    else:
-        T_map = template('freefree_T_ns512.fits')
+def SO_f1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+    T_map = get_data_from_url('freefree_T_ns{}.fits'.format(nside_template))
     return [{
         'model': 'power_law',
         'nu_0_I': 30.,
@@ -76,13 +65,9 @@ def SO_f0(nside, pixel_indices=None, mpi_comm=None, small_scale=False):
         'spectral_index': -2.14,
     }]
 
-def SO_a0(nside, pixel_indices=None, mpi_comm=None, small_scale=False):
-    if small_scale:
-        T_map1 = get_data_from_url('ame_T_ns4096.fits')
-        T_map2 = get_data_from_url('ame2_T_ns4096.fits')
-    else:
-        T_map1 = template('ame_T_ns512.fits')
-        T_map2 = template('ame2_T_ns512.fits')
+def SO_a0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+    T_map1 = get_data_from_url('ame_T_ns{}.fits'.format(nside_template))
+    T_map2 = get_data_from_url('ame2_T_ns{}.fits'.format(nside_template))
     return [{
         'model': 'spdust',
         'nu_0_I': 22.8,
