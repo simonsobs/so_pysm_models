@@ -90,7 +90,7 @@ The default parameters are optimized for SO-SAT observations. Meaning that the a
 COLines
 =======
 
-This class implements simulations for Galactic CO emission involving the first 3 CO rotational lines, i.e. :math:`J=1-0,2-1,3-2` whose center frequency is respectively at :math:`\nu_0 = 115.3, 230.5,345.8` GHz. The CO emission map templates are the CO Planck maps obtained with ``MILCA`` component separation algorithm (See `Planck paper <https://www.aanda.org/articles/aa/abs/2014/11/aa21553-13/aa21553-13.html>`). The CO maps have been released at the nominal resolution (10 and 5 arcminutes) and they are convolved with a 1 deg gaussian beam. 
+This class implements simulations for Galactic CO emission involving the first 3 CO rotational lines, i.e. :math:`J=1-0,2-1,3-2` whose center frequency is respectively at :math:`\nu_0 = 115.3, 230.5,345.8` GHz. The CO emission map templates are the CO Planck maps obtained with ``MILCA`` component separation algorithm (See `Planck paper <https://www.aanda.org/articles/aa/abs/2014/11/aa21553-13/aa21553-13.html>`). The CO maps have been released at the nominal resolution (10 and 5 arcminutes). However, to reduce  noise contamination from template maps (especially at intermediate and high Galactic latitudes), we  convolved them with a 1 deg gaussian beam. 
 
 The Stokes I map is computed from the template one as it follows: 
 
@@ -123,9 +123,9 @@ Most of the CO emission is expected to be confined in the  Galactic midplane. Ho
 
 The PySM user can include the eventuality of molecular emission (both unpolarized and polarized) at High Gal. Latitudes by coadding to the emission maps one realization of CO emission simulated with MCMole3D together with  the Planck CO map. The polarization is simulated similarly as above. 
 
-The ``MCMole3D`` input parameters  are are obtained from best fit with the Planck CO 1-0 map (see Puglisi et al. 2017 and the `documentation <http://giuspugl.github.io/mcmole/index.html>`). If ``include_high_galactic_latitude_clouds=True``, a mock CO cloud map is simulated with ``MCMole3D`` and coadded to the Planck CO emission map. The polarization is simulated similarly as above.
+The ``MCMole3D`` input parameters  are are obtained from best fit with the Planck CO 1-0 map (see Puglisi et al. 2017 and the `documentation <http://giuspugl.github.io/mcmole/index.html>`). If ``include_high_galactic_latitude_clouds=True``, a mock CO cloud map is simulated with ``MCMole3D``, encoding high Galactic latitudes clouds at latitudes above and below  than 20 degres. The mock emission map is then coadded to the Planck CO emission map. The polarization is simulated similarly as above.
 
-The installation of ``mcmole3d`` is not required, HGL clouds can be input to the CO emission by setting ``run_mcmole3d=False``  (which is the default). However, if one wants to run several mock CO  realizations observing high Galactic latitude patches we encourage to run ``mcmole3d`` by changing ``random_seed`` in the CO class constructor. The parameter ``theta_high_galactic_latitude_deg`` set the latitude above which CO emission from high Galactic latitudes can be included. 
+The installation of ``mcmole3d`` is not required, HGL clouds can be input to the CO emission by setting ``run_mcmole3d=False``  (which is the default). However, if one wants to run several mock CO  realizations observing high Galactic latitude patches we encourage to run ``mcmole3d`` by changing ``random_seed`` in the CO class constructor. The parameter ``theta_high_galactic_latitude_deg`` set the latitude above which CO emission from high Galactic latitudes can be included and it has an impact **only when** ``run_mcmole3d=True``.  
 
 The default parameters are set to include  CO 1-0 emission and polarization (with 0.1% constant polarization fraction), in particular: 
 
