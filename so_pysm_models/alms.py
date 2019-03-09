@@ -80,7 +80,7 @@ class PrecomputedAlms:
             assert (self.shape is not None) and (self.wcs is not None)
             n_comp = 3 if self.has_polarization else 1
             output_map = enmap.empty((n_comp,) + self.shape[-2:], self.wcs)
-            curvedsky.alm2map(alm, self.output_map, spin=[0, 2], verbose=True)
+            curvedsky.alm2map(alm, output_map, spin=[0, 2], verbose=True)
         elif self.nside is not None:
             output_map = hp.alm2map(alm, self.nside)
         else:
