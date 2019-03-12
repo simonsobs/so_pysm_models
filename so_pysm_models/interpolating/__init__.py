@@ -8,7 +8,6 @@ import pysm
 
 
 class InterpolatingComponent:
-    """PySM component interpolating between precomputed maps"""
 
     def __init__(
         self,
@@ -21,8 +20,27 @@ class InterpolatingComponent:
         mpi_comm=None,
         verbose=False,
     ):
-        """Path should contain Healpix maps named as the frequency in GHz
-        e.g. 20.fits or 20.5.fits or 00100.fits"""
+        """PySM component interpolating between precomputed maps
+
+        See more details at https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/models.html
+
+        Parameters
+        ----------
+        path : str
+            Path should contain maps named as the frequency in GHz e.g. 20.fits or 20.5.fits or 00100.fits
+        input_units : str
+            Any unit available in PySM (see `pysm.convert_units` e.g. `Jysr`, `MJsr`, `uK_RJ`, `K_CMB`).
+        target_nside : int
+            HEALPix NSIDE of the output maps
+        has_polarization : bool
+            whether or not to simulate also polarization maps
+        pixel_indices : ndarray of ints
+            Outputs partial maps given HEALPix pixel indices in RING ordering
+        mpi_comm : mpi4py communicator
+            See the documentation of pysm.read_map
+        verbose : bool
+            Control amount of output
+        """
 
         self.maps = {}
         self.maps = self.get_filenames(path)
