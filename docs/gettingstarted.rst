@@ -53,3 +53,4 @@ see example notebooks:
 
 * `Example Gaussian Synchrotron <https://gist.github.com/zonca/51a6fa9763106c78813f964a4b88f0fc>`_
 * `Example Gaussian Dust <https://gist.github.com/zonca/4ddb5e384cb34f8a2945c041d13e9428>`_
+* `Example InterpolatingComponent <https://gist.github.com/zonca/08751497b040ec9d62ff5175573c786e>`_
