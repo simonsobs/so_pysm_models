@@ -111,7 +111,9 @@ Adds a custom emission to the sky simulated by [PySM](https://github.com/bthorne
 A folder of maps named with their frequency in GHz with the flux in any unit supported
 by PySM (e.g. `Jysr`, `MJsr`, `uK_RJ`, `K_CMB`).  They don't need to be equally spaced
 
-For example::
+For example:
+
+.. code-block:: bash
 
     ls `cib_precomputed_maps/`
     0010.0.fits 0015.0.fits 0018.0.fits
