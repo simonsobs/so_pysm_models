@@ -100,3 +100,32 @@ The transformation between Spherical Harmonics and pixel domain can be performed
 `signal` method based on `precompute_output_map`.
 
 See the `documentation about mapsims <https://mapsims.readthedocs.io>`_ about specific simulated datasets.
+
+InterpolatingComponent
+======================
+
+Adds a custom emission to the sky simulated by [PySM](https://github.com/bthorne93/PySM_public) defined as a set of template maps at pre-defined frequencies to be interpolated at the frequencies requested through PySM.
+
+**Inputs**
+
+A folder of maps named with their frequency in GHz with the flux in any unit supported
+by PySM (e.g. `Jysr`, `MJsr`, `uK_RJ`, `K_CMB`).  They don't need to be equally spaced
+
+For example:
+
+.. code-block:: bash
+
+    ls `cib_precomputed_maps/`
+    0010.0.fits 0015.0.fits 0018.0.fits
+
+**Usage**
+
+Instantiate `InterpolatingComponent` and point it to the folder, define the unit and the target nside (same used by PySM).
+It supports all `interpolation_kind` of
+[`scipy.interpolate.interp1d`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html),
+e.g. "nearest", "linear", "quadratic", "cubic"::
+
+    cib = InterpolatingComponent(path="cib_precomputed_maps", input_units="MJysr", target_nside=nside, interpolation_kind="linear",
+                             has_polarization=False, verbose=True)
+
+`Full example notebook <https://gist.github.com/zonca/08751497b040ec9d62ff5175573c786e>`
