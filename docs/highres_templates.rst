@@ -27,10 +27,9 @@ Downloaded files are stored in the `astropy` cache, generally `~/.astropy/cache`
 Details about individual models
 ===============================
 
-**Dust**
+***Dust***
 
-SO_d0:
-
+*SO_d0:*
 Thermal dust is modeled as a single-component modified black body (mbb).
 There is no spatial variation of temperature and emissivity in the sky, and :math:`T=19.6` K and
 :math:`\beta_d=1.53`.
