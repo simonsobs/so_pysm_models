@@ -48,3 +48,4 @@ same model as PySM f1
 
 * SO_a0:
 sum of two spinning dust populations with spatially constant peak frequency.
+No polarization.
