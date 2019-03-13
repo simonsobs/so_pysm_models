@@ -10,6 +10,7 @@ This is the documentation for so_pysm_models.
 
    gettingstarted
    models
+   highres_templates
 
 Reference/API
 =============
