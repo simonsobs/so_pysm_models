@@ -2,7 +2,7 @@ import numpy as np
 
 import healpy as hp
 
-from pysm import read_map, loadtxt, convert_units
+from pysm import read_map, convert_units
 
 from .utils import get_data_from_url
 
