@@ -90,13 +90,15 @@ The default parameters are optimized for SO-SAT observations. Meaning that the a
 COLines
 =======
 
-:py:class:`COLines` is not a standard PySM component because PySM does not allow to distinguish between a case were a component is evaluated for the purpose of integrating over the bandpass or evaluated for separate channels.
-Therefore this class should be instantiated and summed to the output of PySM.
+:py:class:`COLines` is not a standard PySM component because PySM does not allow to distinguish between a case where a component is evaluated for the purpose of integrating over the bandpass or evaluated for separate channels.
+Therefore this class should be instantiated choosing the desired line and summed to the output of PySM.
 For example::
 
     from so_pysm_models import COLines
     co = COLines(target_nside=16, output_units="uK_CMB", line="10")
     pysm_map += bandpass_weight * hp.smoothing(co.signal(), fwhm=fwhm)
+
+Where `bandpass_weight` is the scalar transmission at the line frequency (which is available at `co.line_frequency`), i.e. if the bandpass is a top-hat between 110 and 120 GHz, the "10" line emission should be multiplied by `0.1`.
 
 This class implements simulations for Galactic CO emission involving the first 3 CO rotational lines, i.e. :math:`J=1-0,2-1,3-2` whose center frequency is respectively at :math:`\nu_0 = 115.3, 230.5,345.8` GHz. The CO emission map templates are the CO Planck maps obtained with ``MILCA`` component separation algorithm (See `Planck paper <https://www.aanda.org/articles/aa/abs/2014/11/aa21553-13/aa21553-13.html>`). The CO maps have been released at the nominal resolution (10 and 5 arcminutes). However, to reduce  noise contamination from template maps (especially at intermediate and high Galactic latitudes), we  convolved them with a 1 deg gaussian beam.
 
