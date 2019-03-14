@@ -2,7 +2,7 @@ import numpy as np
 
 import healpy as hp
 
-from pysm.common import read_map, loadtxt
+from pysm import read_map, loadtxt, convert_units
 
 from .utils import get_data_from_url
 
@@ -11,6 +11,7 @@ class COLines:
     def __init__(
         self,
         target_nside,
+        output_units,
         has_polarization=True,
         line="10",
         include_high_galactic_latitude_clouds=False,
@@ -31,6 +32,8 @@ class COLines:
         ----------
         target_nside : int
             HEALPix NSIDE of the output maps
+        output_units : str
+            unit string as defined by `pysm.convert_units`, e.g. uK_RJ, K_CMB
         has_polarization : bool
             whether or not to simulate also polarization maps
         line : string 
@@ -82,6 +85,7 @@ class COLines:
         self.random_seed = random_seed
         self.run_mcmole3d = run_mcmole3d
 
+        self.output_units = output_units
         self.verbose = verbose
 
     @property
@@ -109,9 +113,11 @@ class COLines:
 
         if self.has_polarization:
             Q_map, U_map = self.simulate_polarized_emission(out)
-            return np.array([out, Q_map, U_map])
-        else:
-            return out
+            out = np.array([out, Q_map, U_map])
+
+        unit_conversion = convert_units("K_CMB", self.output_units, self.line_frequency)
+
+        return out * unit_conversion
 
     def simulate_polarized_emission(self, I_map):
         """
