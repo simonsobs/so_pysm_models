@@ -25,7 +25,7 @@ class COLines:
     ):
 
         """Class defining attributes for CO line emission.
-           CO templates are extracted from Type 1 CO Planck maps. 
+           CO templates are extracted from Type 1 CO Planck maps.
            See further details in https://www.aanda.org/articles/aa/abs/2014/11/aa21553-13/aa21553-13.html
 
         Parameters
@@ -36,23 +36,23 @@ class COLines:
             unit string as defined by `pysm.convert_units`, e.g. uK_RJ, K_CMB
         has_polarization : bool
             whether or not to simulate also polarization maps
-        line : string 
-            CO rotational transitions. 
-            Accepted values : 10, 21, 32  
+        line : string
+            CO rotational transitions.
+            Accepted values : 10, 21, 32
         polarization_fraction: float
             polarisation fraction for polarised CO emission.
-        include_high_galactic_latitude_clouds: bool 
-            If True it includes a simulation from MCMole3D to include 
+        include_high_galactic_latitude_clouds: bool
+            If True it includes a simulation from MCMole3D to include
             high Galactic Latitude clouds.
-            (See more details at http://giuspugl.github.io/mcmole/index.html) 
-        run_mcmole3d: bool 
+            (See more details at http://giuspugl.github.io/mcmole/index.html)
+        run_mcmole3d: bool
             If True it simulates  HGL cluds by running MCMole3D, otherwise it coadds
             a map of HGL emission.
-        random_seed: int 
-            set random seed for mcmole3d simulations. 
+        random_seed: int
+            set random seed for mcmole3d simulations.
         theta_high_galactic_latitude_deg : float
-            Angle in degree  to identify High Galactic Latitude clouds 
-            (i.e. clouds whose latitude b is |b|> theta_high_galactic_latitude_deg). 
+            Angle in degree  to identify High Galactic Latitude clouds
+            (i.e. clouds whose latitude b is |b|> theta_high_galactic_latitude_deg).
         pixel_indices : ndarray of ints
             Outputs partial maps given HEALPix pixel indices in RING ordering
         mpi_comm : mpi4py communicator
@@ -61,7 +61,7 @@ class COLines:
 
         self.line = line
         self.line_index = {"10": 0, "21": 1, "32": 2}[line]
-        self.line_frequency ={"10": 115.271 , "21": 230.538, "32": 345.796}[line]
+        self.line_frequency = {"10": 115.271, "21": 230.538, "32": 345.796}[line]
         self.target_nside = target_nside
 
         self.template_nside = 512 if self.target_nside <= 512 else 2048
@@ -100,7 +100,7 @@ class COLines:
 
     def signal(self):
         """
-        Simulate CO signal 
+        Simulate CO signal
         """
         out = hp.ud_grade(map_in=self.planck_templatemap, nside_out=self.target_nside)
 
@@ -118,12 +118,12 @@ class COLines:
     def simulate_polarized_emission(self, I_map):
         """
         Add polarized emission by means of:
-        - an overall constant polarization fraction, 
-        - a depolarization map to mimick the line of sight depolarization 
-          effect at low Galactic latitudes 
-        - a polarization angle map coming from a dust template 
-          (we exploit the observed correlation between polarized dust and 
-          molecular emission in star forming regions). 
+        - an overall constant polarization fraction,
+        - a depolarization map to mimick the line of sight depolarization
+          effect at low Galactic latitudes
+        - a polarization angle map coming from a dust template
+          (we exploit the observed correlation between polarized dust and
+          molecular emission in star forming regions).
         """
         polangle = self.read_map("co/psimap_dust90_{}.fits".format(self.template_nside))
         depolmap = self.read_map("co/gmap_dust90_{}.fits".format(self.template_nside))
@@ -143,7 +143,6 @@ class COLines:
     def simulate_high_galactic_latitude_CO(self):
         """
         Coadd High Galactic Latitude CO emission, simulated with  MCMole3D.
-        
         """
         if self.run_mcmole3d:
             import mcmole3d as cl
@@ -211,9 +210,7 @@ class COLines:
             return mapclouds * hglmask / belowplanck
         else:
             mapclouds = self.read_map(
-                "co/mcmoleCO_HGL_{}.fits".format(
-                    self.template_nside
-                ),
+                "co/mcmoleCO_HGL_{}.fits".format(self.template_nside),
                 field=self.line_index,
             )
 
