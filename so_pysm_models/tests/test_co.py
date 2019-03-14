@@ -11,6 +11,7 @@ from .. import COLines
 def test_co(include_high_galactic_latitude_clouds):
 
     co = COLines(target_nside=16,
+        output_units="K_CMB",
         has_polarization=True,
         line="10",
         include_high_galactic_latitude_clouds=include_high_galactic_latitude_clouds,
