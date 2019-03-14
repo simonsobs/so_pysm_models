@@ -61,7 +61,7 @@ class COLines:
 
         self.line = line
         self.line_index = {"10": 0, "21": 1, "32": 2}[line]
-        self._freq ={"10": 115.271 , "21": 230.538, "32": 345.796}[line]
+        self.line_frequency ={"10": 115.271 , "21": 230.538, "32": 345.796}[line]
         self.target_nside = target_nside
 
         self.template_nside = 512 if self.target_nside <= 512 else 2048
@@ -87,10 +87,6 @@ class COLines:
 
         self.output_units = output_units
         self.verbose = verbose
-
-    @property
-    def freq(self):
-        return self._freq
 
     def read_map(self, fname, field=None):
         return read_map(
