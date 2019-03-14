@@ -179,9 +179,7 @@ For example:
 **Usage**
 
 Instantiate `InterpolatingComponent` and point it to the folder, define the unit and the target nside (same used by PySM).
-It supports all `interpolation_kind` of
-[`scipy.interpolate.interp1d`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp1d.html),
-e.g. "nearest", "linear", "quadratic", "cubic"::
+It supports all `interpolation_kind` of :py:func:`scipy.interpolate.interp1d`, e.g. "nearest", "linear", "quadratic", "cubic"::
 
     cib = InterpolatingComponent(path="cib_precomputed_maps", input_units="MJysr", target_nside=nside, interpolation_kind="linear",
                              has_polarization=False, verbose=True)
