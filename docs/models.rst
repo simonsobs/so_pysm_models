@@ -162,7 +162,7 @@ See the `documentation about mapsims <https://mapsims.readthedocs.io>`_ about sp
 InterpolatingComponent
 ======================
 
-Adds a custom emission to the sky simulated by [PySM](https://github.com/bthorne93/PySM_public) defined as a set of template maps at pre-defined frequencies to be interpolated at the frequencies requested through PySM.
+Adds a custom emission to the sky simulated by PySM defined as a set of template maps at pre-defined frequencies to be interpolated at the frequencies requested through PySM.
 
 **Inputs**
 
