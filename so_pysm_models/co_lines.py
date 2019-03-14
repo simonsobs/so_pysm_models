@@ -25,8 +25,8 @@ class COLines:
     ):
 
         """Class defining attributes for CO line emission.
-           CO templates are extracted from Type 1 CO Planck maps.
-           See further details in https://www.aanda.org/articles/aa/abs/2014/11/aa21553-13/aa21553-13.html
+        CO templates are extracted from Type 1 CO Planck maps.
+        See further details in https://www.aanda.org/articles/aa/abs/2014/11/aa21553-13/aa21553-13.html
 
         Parameters
         ----------
@@ -52,7 +52,7 @@ class COLines:
             set random seed for mcmole3d simulations.
         theta_high_galactic_latitude_deg : float
             Angle in degree  to identify High Galactic Latitude clouds
-            (i.e. clouds whose latitude b is |b|> theta_high_galactic_latitude_deg).
+            (i.e. clouds whose latitude b is `|b|> theta_high_galactic_latitude_deg`).
         pixel_indices : ndarray of ints
             Outputs partial maps given HEALPix pixel indices in RING ordering
         mpi_comm : mpi4py communicator
@@ -118,12 +118,10 @@ class COLines:
     def simulate_polarized_emission(self, I_map):
         """
         Add polarized emission by means of:
-        - an overall constant polarization fraction,
-        - a depolarization map to mimick the line of sight depolarization
-          effect at low Galactic latitudes
-        - a polarization angle map coming from a dust template
-          (we exploit the observed correlation between polarized dust and
-          molecular emission in star forming regions).
+        * an overall constant polarization fraction,
+        * a depolarization map to mimick the line of sigth depolarization effect at low Galactic latitudes
+        * a polarization angle map coming from a dust template (we exploit the observed correlation
+        between polarized dust and molecular emission in star forming regions).
         """
         polangle = self.read_map("co/psimap_dust90_{}.fits".format(self.template_nside))
         depolmap = self.read_map("co/gmap_dust90_{}.fits".format(self.template_nside))
