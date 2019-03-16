@@ -4,6 +4,12 @@ Summary of Models
 This page contains high-level documentation about the available models,
 check the classes docstrings, or the `online documentation <https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/index.html#classes>`, for the specific arguments.
 
+The input template maps for many models are available at NERSC on the `cmb` project space at::
+
+    /global/project/projectdirs/cmb/www/so_pysm_models_data
+
+they are also published via web at http://portal.nersc.gov/project/cmb/so_pysm_models_data/.
+
 GaussianSynchrotron
 ===================
 
