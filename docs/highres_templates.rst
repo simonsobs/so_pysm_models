@@ -17,12 +17,11 @@ on the `small_scale` keyword passed to :py:func:`get_so_models`, i.e. you can ru
 are not interested in small scale structure you can save memory and time setting `small_scale` to `False` and
 retrieve the :math:`N_{side}` 512 template.
 
-low-resolution templates are standard PySM ones at :math:`N_{side}` 512.
+Low-resolution templates are standard PySM ones at :math:`N_{side}` 512.
 High-resolution templates are computed from the low-resolution ones, by extrapolating
 power spectra considering a simple power law model, and by generating small scales as Gaussian realization of these spectra.
-High-resolution templates therefore have Gaussian small scales (for ell lager than ~ 1000) modulated with large scale signal
+High-resolution templates therefore have Gaussian small scales (for :math:`\ell > ~ 1000`) modulated with large scale signal
 for both temperature and polarization.
-
 
 
 Details about individual models
@@ -30,9 +29,7 @@ Details about individual models
 
 ## Dust
 
-* **SO_d0**: Thermal dust is modeled as a single-component modified black body (mbb).
-There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and
-:math:`\beta_d=1.53`.
+* **SO_d0**: Thermal dust is modeled as a single-component modified black body (mbb).  There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and :math:`\beta_d=1.53`.
 
 ## Synchrotron
 
@@ -40,7 +37,7 @@ There is no spatial variation of temperature and emissivity in the sky: :math:`T
 
 ## Free Free
 
-* **SO_f0**: same model as PySM f1, no spatial variation of spectral index equal to -2.4.
+* **SO_f0**: same model as PySM `f1`, no spatial variation of spectral index equal to -2.4.
 
 ## AME
 
