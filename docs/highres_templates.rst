@@ -29,23 +29,19 @@ Details about individual models
 
 **Dust**
 
-* SO_d0:
-Thermal dust is modeled as a single-component modified black body (mbb).
+* SO_d0: Thermal dust is modeled as a single-component modified black body (mbb).
 There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and
 :math:`\beta_d=1.53`.
 
 **Synchrotron**
 
-* SO_s0:
-power law spectral energy distribution with fixed spectral index :math:`\beta_s=-3.1`
+* SO_s0: power law spectral energy distribution with fixed spectral index :math:`\beta_s=-3.1`
 
 **Free Free**
 
-* SO_f1:
-same model as PySM f1, no spatial variation of spectral index equal to -2.4
+* SO_f1: same model as PySM f1, no spatial variation of spectral index equal to -2.4
 
 **AME**
 
-* SO_a0:
-sum of two spinning dust populations with spatially constant peak frequency.
+* SO_a0: sum of two spinning dust populations with spatially constant peak frequency.
 No polarization.
