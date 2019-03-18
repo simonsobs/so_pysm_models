@@ -24,9 +24,11 @@ def get_data_from_url(filename):
     return map_out
 
 
-def get_so_models(key, nside, pixel_indices=None, mpi_comm=None, small_scale=False):
+def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
+    small_scale = key.endswith("s")
     if small_scale:
         nside_template = 4096
+        key = key[:-1]
     else:
         nside_template = 512
     model = eval(key)(
