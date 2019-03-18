@@ -18,7 +18,7 @@ retrieve the :math:`N_{side}` 512 template.
 low-resolution templates are standard PySM ones at :math:`N_{side}` 512.
 High-resolution templates are computed from the low-resolution ones, by extrapolating
 power spectra considering a simple power law model, and by generating small scales as Gaussian realization of these spectra.
-High-resolution templates therefore have Gaussian small scales (for ell lager than ~ 1000) modulated with large scales signal
+High-resolution templates therefore have Gaussian small scales (for ell lager than ~ 1000) modulated with large scale signal
 for both temperature and polarization.
 
 Downloaded files are stored in the `astropy` cache, generally `~/.astropy/cache` and are accessible using :py:mod:`astropy.utils.data`, e.g. :py:func:`astropy.utils.data.get_cached_urls` gives the list of downloaded files. If running at NERSC, the module automatically uses the files accessible locally from the `/project` filesystem.
@@ -31,7 +31,7 @@ Details about individual models
 
 * SO_d0:
 Thermal dust is modeled as a single-component modified black body (mbb).
-There is no spatial variation of temperature and emissivity in the sky, and :math:`T=19.6` K and
+There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and
 :math:`\beta_d=1.53`.
 
 **Synchrotron**
@@ -42,7 +42,7 @@ power law spectral energy distribution with fixed spectral index :math:`\beta_s=
 **Free Free**
 
 * SO_f1:
-same model as PySM f1
+same model as PySM f1, no spatial variation of spectral index equal to -2.4
 
 **AME**
 
