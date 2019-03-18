@@ -39,7 +39,7 @@ There is no spatial variation of temperature and emissivity in the sky: :math:`T
 
 ## Free Free
 
-* **SO_f1**: same model as PySM f1, no spatial variation of spectral index equal to -2.4.
+* **SO_f0**: same model as PySM f1, no spatial variation of spectral index equal to -2.4.
 
 ## AME
 
