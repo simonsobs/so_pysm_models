@@ -93,7 +93,7 @@ def SO_s0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     ]
 
 
-def SO_f1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+def SO_f0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     T_map = get_data_from_url("freefree_T_ns{}.fits".format(nside_template))
     return [
         {
