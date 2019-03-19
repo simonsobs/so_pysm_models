@@ -2,7 +2,7 @@ Summary of Models
 **********************
 
 This page contains high-level documentation about the available models,
-check the classes docstrings, or the `online documentation <https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/index.html#classes>`, for the specific arguments.
+check the classes docstrings, or the `online documentation <https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/index.html#classes>`_, for the specific arguments.
 
 The input template maps for many models are available at NERSC on the `cmb` project space at::
 
@@ -190,4 +190,29 @@ It supports all `interpolation_kind` of :py:func:`scipy.interpolate.interp1d`, e
     cib = InterpolatingComponent(path="cib_precomputed_maps", input_units="MJysr", target_nside=nside, interpolation_kind="linear",
                              has_polarization=False, verbose=True)
 
-`Full example notebook <https://gist.github.com/zonca/08751497b040ec9d62ff5175573c786e>`
+`Full example notebook <https://gist.github.com/zonca/08751497b040ec9d62ff5175573c786e>`_
+
+WebSky
+======
+
+The Websky suite of simulated extragalactic component maps, determined from large scale structure light cone realizations and  based on Lagrangian perturbation theory, Peak Patch Lagrangian halo finding, and modeling of SZ and CIB effects, can be read into PySM as precomputed external fits files using InterpolatingComponent.  More information on the Peak Patch halo finding method can be found in `Stein, Alvarez, and Bond (2018) <https://arxiv.org/abs/1810.07727>`_, and selected maps and halo catalogs are available from the `Websky website <http://mocks.cita.utoronto.ca/websky>`_. For a description of the models as implemented for Simons Observatory, see the `SO Websky model repository <https://github.com/simonsobs/websky_model>`_.
+
+Websky maps generated as input for PySM are described below. Currently, cosmic infrared background at SO frquencies are available, with tSZ and kSZ coming soon.
+
+**Cosmic Infrared Background**
+
+The Planck (2013) CIB halo model is used, along with a halo occupation distribution. More details can be found `here <https://github.com/simonsobs/websky_model>`_. 
+
+The current version of the maps are of intensity in units of MJy/Sr with filename convenction cib_ns[NSIDE]_nu[FREQ].fits e.g. cib_ns4096_nu0027.fits is the map of CIB intensity at 27 GHz and will be used by InterpolatingComponent at that frequency, and can be found on nersc at `/project/projectdirs/sobs/v4_sims/mbs/websky/data/v0.2`. There are 18 fits files at Nside=4096 at frequencies [27, 39, 93, 145, 225, 280] +/- 1 GHz. These intensities were selected because in order to be able to interpolate accurately at the 6 frequencies of interest with as few maps as possible. More frequencies will be made available after a full set of map based simulations at those bands that include correlated lensing and SZ components has been implemented.
+
+**Thermal SZ Effect**
+
+Provided is a map of the Compton-y parameter and is based on Battaglia et al. (2012) pressure profiles, more details `here <https://github.com/simonsobs/websky_model>`_. Not yet implemented in PySM.
+
+**Kinetic SZ Effect**
+
+Provided is a map of the temperature fluctuation due to line of sight peculiear velocities of electrons along the line of sight. Electrons are assumed to follow an NFW profile interior to halos and second order LPT outside, more details `here <https://github.com/simonsobs/websky_model>`_. Not yet implemented in PySM.
+
+**Lensing Convergence** 
+
+Provided is a map of the lensing convergence due to fluctuations in the matter distribution along the line of sight. Matter is assumed to follow an NFW profile interior to halos and second order LPT outside. This convergence map is used to lense a Gaussian realization of the unlensed primary CMB, which is then read into PySM as the primary lensed CMB.
