@@ -15,15 +15,14 @@ class WebSkyCIB(InterpolatingComponent):
         verbose=False,
     ):
         super().__init__(
-            self,
             path,
             input_units,
             target_nside,
             interpolation_kind,
-            False,
-            pixel_indices,
-            mpi_comm,
-            verbose,
+            has_polarization=False,
+            pixel_indices=pixel_indices,
+            mpi_comm=mpi_comm,
+            verbose=verbose,
         )
 
     def get_fnames(self, path):
