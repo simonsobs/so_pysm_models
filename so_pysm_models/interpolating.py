@@ -143,10 +143,14 @@ class InterpolatingComponent:
             return out
 
     def read_map(self, freq):
+        filename = self.maps[freq]
+        return self.read_map_file(filename)
+
+    def read_map_file(self, freq, filename):
         if self.verbose:
-            print("Reading map {}".format(self.maps[freq]))
+            print("Reading map {}".format(filename))
         m = pysm.read_map(
-            self.maps[freq],
+            filename,
             nside=self.nside,
             field=(0, 1, 2) if self.has_polarization else 0,
             pixel_indices=self.pixel_indices,
