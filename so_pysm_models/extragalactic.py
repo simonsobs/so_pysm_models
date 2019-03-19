@@ -5,7 +5,7 @@ class WebSkyCIB(InterpolatingComponent):
     def __init__(self, path, input_units="MJysr", target_nside=4096, interpolation_kind="linear",
                  pixel_indices=None,
                  mpi_comm=None, verbose=False):
-        InterpolatingComponent.__init__(self, path, input_units, target_nside, interpolation_kind,
+        super().__init__(self, path, input_units, target_nside, interpolation_kind,
                                     False, pixel_indices,
                                     mpi_comm, verbose)
 
