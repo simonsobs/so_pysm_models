@@ -11,7 +11,7 @@ class WebSkyCIB(InterpolatingComponent):
 
     def get_fnames(self,path):
         # Override this to implement name convention
-        import websky from websky_model
+        from websky_model import websky
         ws = websky.WebSky(path)
         freqs = [100,143,217,353,545]
         fnames = {}
