@@ -144,7 +144,7 @@ class InterpolatingComponent:
 
     def read_map(self, freq):
         filename = self.maps[freq]
-        return self.read_map_file(filename)
+        return self.read_map_file(freq, filename)
 
     def read_map_file(self, freq, filename):
         if self.verbose:
