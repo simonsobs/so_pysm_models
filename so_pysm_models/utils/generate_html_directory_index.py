@@ -116,11 +116,10 @@ def process_dir(top_dir, opts):
      <head>{css}</head>
      <body>
       <div class="content">
-       <h1>{curr_dir}</h1>
 
-       <h2>Simons Observatory PySM models files</h2>
+       <h1>Simons Observatory PySM models files: {curr_dir}/ </h1>
 
-       <p>see <a href="https://github.com/simonsobs/so_pysm_models">https://github.com/simonsobs/so_pysm_models</a></p>
+       <li>see <a href="https://github.com/simonsobs/so_pysm_models">github.com/simonsobs/so_pysm_models</a></li>
 
        <li><a style="display:block; width:100%" href="..">&#x21B0;</a></li>'''.format(
                 css=CSS,
