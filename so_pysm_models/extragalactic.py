@@ -1,4 +1,4 @@
-from pysm_interpolating_component import InterpolatingComponent
+from . import InterpolatingComponent
 
 class WebSkyCIB(InterpolatingComponent):
     """PySM component interpolating between precomputed maps"""
