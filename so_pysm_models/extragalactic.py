@@ -1,5 +1,5 @@
 from . import InterpolatingComponent
-
+import os
 
 class WebSkyCIB(InterpolatingComponent):
     """PySM component interpolating between precomputed maps"""
@@ -25,13 +25,10 @@ class WebSkyCIB(InterpolatingComponent):
             verbose=verbose,
         )
 
-    def get_fnames(self, path):
-        # Override this to implement name convention
-        from websky_model import websky
-
-        ws = websky.WebSky(path)
-        freqs = [100, 143, 217, 353, 545]
-        fnames = {}
-        for freq in freqs:
-            fnames[freq] = ws.cib_map_file_name(str(freq), "0")
-        return fnames
+    def get_filenames(self, path):
+        filenames = {}
+        for f in os.listdir(path):
+            if f.endswith(".fits"):
+                freq = int(f.split(".")[0].split("nu")[1])
+                filenames[freq] = os.path.join(path, f)
+        return filenames
