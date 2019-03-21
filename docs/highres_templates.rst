@@ -42,18 +42,18 @@ Details about individual models
 
 Append "s" after a model name to access the :math:`N_{side}` 4096 template, i.e. `SO_f0s`.
 
-## Dust
+**Dust**
 
 * **SO_d0**: Thermal dust is modeled as a single-component modified black body, with same templates as in PySM model `d1`.  There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and :math:`\beta_d=1.53` (values taken from Planck Collaboration IX 2018).
 
-## Synchrotron
+**Synchrotron**
 
 * **SO_s0**: Templates from PySM model `s1`. Power law spectral energy distribution, with fixed spectral index :math:`\beta_s=-3.1` (from Planck Collaboration IX 2018).
 
-## Free Free
+**Free Free**
 
 * **SO_f0**: same model as PySM `f1`, no spatial variation of spectral index equal to -2.4.
 
-## AME
+**AME**
 
 * **SO_a0**: sum of two spinning dust populations (as in PySM model `a1`) with spatially constant peak frequency. No polarization.
