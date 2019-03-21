@@ -29,11 +29,11 @@ Details about individual models
 
 ## Dust
 
-* **SO_d0**: Thermal dust is modeled as a single-component modified black body (mbb).  There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and :math:`\beta_d=1.53`.
+* **SO_d0**: Thermal dust is modeled as a single-component modified black body (mbb), with same templates as in PySM model `d1`.  There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and :math:`\beta_d=1.53` (values taken from Planck Collaboration IX 2018).
 
 ## Synchrotron
 
-* **SO_s0**: power law spectral energy distribution with fixed spectral index :math:`\beta_s=-3.1`.
+* **SO_s0**: Templates from PySM model `s1`. Power law spectral energy distribution, with fixed spectral index :math:`\beta_s=-3.1` (from Planck Collaboration IX 2018).
 
 ## Free Free
 
@@ -41,4 +41,4 @@ Details about individual models
 
 ## AME
 
-* **SO_a0**: sum of two spinning dust populations with spatially constant peak frequency. No polarization.
+* **SO_a0**: sum of two spinning dust populations (as in PySM model `a1`) with spatially constant peak frequency. No polarization.
