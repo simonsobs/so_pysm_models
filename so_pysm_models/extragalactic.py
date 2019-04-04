@@ -7,7 +7,7 @@ class WebSkyCIB(InterpolatingComponent):
 
     def __init__(
         self,
-        websky_version="0.2",
+        websky_version="0.3",
         input_units="MJysr",
         target_nside=4096,
         interpolation_kind="linear",
@@ -26,22 +26,24 @@ class WebSkyCIB(InterpolatingComponent):
             verbose=verbose,
         )
 
-    def get_filenames(self, path):
+    def get_filenames(self,path):
         """Get filenames for a websky version
 
         For a standard interpolating component, we list files in folder,
         here we need to know the names in advance so that we can only download the required maps
         """
         websky_version = path
-        if websky_version == "0.2":
+        if websky_version == "0.3":
             filenames = {}
+            def add_freq(frequency_GHz): filenames[frequency_GHz] = 'websky/0.3/cib_'+str(frequency_GHz).zfill(4)+ '.fits'
             for base_freq in [27, 39, 93, 145, 225, 280]:
                 for delta_freq in [-1, 0, 1]:
-                    frequency_GHz = base_freq + delta_freq
-                    filenames[frequency_GHz] = 'websky/0.2/cib/cib_ns4096_nu{freq:04}.fits'.format(freq = frequency_GHz)
-        else:
-            raise TypeError("Invalid websky version")
+                    add_freq(base_freq + delta_freq)
+            for base_freq in [100,217,353,545,857]:
+                delta_freq = 0
+                add_freq(base_freq + delta_freq)
         return filenames
+
 
     def read_map(self, freq):
         filename = utils.get_data_from_url(self.maps[freq])

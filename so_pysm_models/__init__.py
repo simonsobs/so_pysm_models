@@ -35,3 +35,4 @@ from .alms import PrecomputedAlms
 from .interpolating import InterpolatingComponent
 from .co_lines import COLines
 from .extragalactic import WebSkyCIB
+from .so_models import get_so_models
