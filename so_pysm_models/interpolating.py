@@ -41,7 +41,7 @@ class InterpolatingComponent:
         verbose : bool
             Control amount of output
         """
-        print("path",path)
+
         self.maps = {}
         self.maps = self.get_filenames(path)
 

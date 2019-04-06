@@ -33,7 +33,7 @@ class WebSkyCIB(InterpolatingComponent):
         For a standard interpolating component, we list files in folder,
         here we need to know the names in advance so that we can only download the required maps
         """
-        print(path)
+
         websky_version = path
         if websky_version == "0.3":
             filenames = {}
