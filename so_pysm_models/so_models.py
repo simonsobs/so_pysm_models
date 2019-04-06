@@ -140,3 +140,35 @@ def SO_a0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
             "nu_peak": 33.35,
         },
     ]
+
+def SO_ksz(nside, pixel_indices=None, mpi_comm=None, nside_template=512, version='0.3'):
+    T_map1 = get_data_from_url("ame1_T_ns{}.fits".format(nside_template))
+    T_map2 = get_data_from_url("ame2_T_ns{}.fits".format(nside_template))
+    return [
+        {
+            "model": "spdust",
+            "nu_0_I": 22.8,
+            "nu_0_P": 22.8,
+            "A_I": read_map(
+                T_map1, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "nu_peak_0": 30.,
+            "emissivity": loadtxt(
+                get_data_from_url("ame_emissivity.txt"), mpi_comm=mpi_comm, unpack=True
+            ),
+            "nu_peak": 18.95,
+        },
+        {
+            "model": "spdust",
+            "nu_0_I": 41.0,
+            "nu_0_P": 41.0,
+            "A_I": read_map(
+                T_map2, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "nu_peak_0": 30.,
+            "emissivity": loadtxt(
+                get_data_from_url("ame_emissivity.txt"), mpi_comm=mpi_comm, unpack=True
+            ),
+            "nu_peak": 33.35,
+        },
+    ]
