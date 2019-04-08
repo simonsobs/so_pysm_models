@@ -5,6 +5,14 @@ import numpy as np
 import healpy as hp
 
 
+def y2uK_CMB(nu):
+    h = 6.62607004e-27
+    k = 1.380622e-16
+    Tcmb = 2.725
+    x = h * nu * 1e9 / k / Tcmb
+    return 1e6 * Tcmb * (x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4)
+
+
 class WebSkyCIB(InterpolatingComponent):
     """PySM component interpolating between precomputed maps"""
 
@@ -89,13 +97,6 @@ class WebSkySZ:
 
         return filename
 
-    def y2uK_CMB(self, nu):
-        h = 6.62607004e-27
-        k = 1.380622e-16
-        Tcmb = 2.725
-        x = h * nu * 1e9 / k / Tcmb
-        return 1e6 * Tcmb * (x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4)
-
     def signal(self, nu, **kwargs):
         """Return map in uK_RJ at given frequency or array of frequencies"""
 
@@ -121,7 +122,7 @@ class WebSkySZ:
 
         szfac = np.ones(len(nu))
         if self.sz_type == "thermal":
-            szfac = self.y2uK_CMB(nu)
+            szfac = y2uK_CMB(nu)
 
         all_maps[:, 0, :] = np.outer(
             pysm.convert_units("uK_CMB", "uK_RJ", nu) * szfac, m
