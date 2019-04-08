@@ -37,19 +37,20 @@ class WebSkyCIB(InterpolatingComponent):
 
         websky_version = path
         if websky_version == "0.3":
-            filenames = {}
 
-            def add_freq(frequency_GHz):
-                filenames[frequency_GHz] = (
-                    "websky/0.3/cib_" + str(frequency_GHz).zfill(4) + ".fits"
-                )
-
+            available_frequencies = []
             for base_freq in [27, 39, 93, 145, 225, 280]:
                 for delta_freq in [-1, 0, 1]:
-                    add_freq(base_freq + delta_freq)
+                    available_frequencies.append(base_freq + delta_freq)
             for base_freq in [100, 217, 353, 545, 857]:
                 delta_freq = 0
-                add_freq(base_freq + delta_freq)
+                available_frequencies.append(base_freq + delta_freq)
+
+            filenames = {
+                freq: "websky/0.3/cib_{:04d}.fits".format(freq)
+                for freq in available_frequencies
+            }
+
         return filenames
 
     def read_map(self, freq):
