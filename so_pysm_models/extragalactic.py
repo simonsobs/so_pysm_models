@@ -6,6 +6,18 @@ import healpy as hp
 
 
 def y2uK_CMB(nu):
+    """Compton-y distortion at a given frequency
+
+    Parmeters:
+    nu (float): frequency in GHz
+
+    Returns:
+    float: intensity variation dT_CMB in micro-Kelvin
+      dT_CMB = dI_nu / (dB_nu / dT)_Tcmb
+      where B_nu is the Planck function and dI_nu is the intensity distortion
+
+    """
+
     h = 6.62607004e-27
     k = 1.380622e-16
     Tcmb = 2.725
