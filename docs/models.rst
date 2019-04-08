@@ -195,23 +195,23 @@ It supports all `interpolation_kind` of :py:func:`scipy.interpolate.interp1d`, e
 WebSky
 ======
 
-The Websky suite of simulated extragalactic component maps, determined from large scale structure light cone realizations and  based on Lagrangian perturbation theory, Peak Patch Lagrangian halo finding, and modeling of SZ and CIB effects, can be read into PySM as precomputed external fits files using InterpolatingComponent.  More information on the Peak Patch halo finding method can be found in `Stein, Alvarez, and Bond (2018) <https://arxiv.org/abs/1810.07727>`_, and selected maps and halo catalogs are available from the `Websky website <http://mocks.cita.utoronto.ca/websky>`_. For a description of the models as implemented for Simons Observatory, see the `SO Websky model repository <https://github.com/simonsobs/websky_model>`_.
+The Websky suite of simulated extragalactic component maps, determined from large scale structure light cone realizations and  based on Lagrangian perturbation theory, Peak Patch Lagrangian halo finding, and modeling of SZ and CIB effects, can be read into PySM as precomputed external fits files using InterpolatingComponent.  More information on the Peak Patch halo finding method can be found in `Stein, Alvarez, and Bond (2018) <https://arxiv.org/abs/1810.07727>`_, and selected maps and halo catalogs are available from the `Websky website <http://mocks.cita.utoronto.ca/websky>`_. Some additional Websky-specific information and tools are available at the `SO Websky model repository <https://github.com/simonsobs/websky_model>`_. 
 
-Websky maps generated as input for PySM are described below. Currently, cosmic infrared background at SO frequencies are available, with tSZ and kSZ coming soon.
+Specific maps generated for so_pysm_models are described below and located on NERSC at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3`.
 
 **Cosmic Infrared Background**
 
 The Planck (2013) CIB halo model is used, along with a halo occupation distribution. More details can be found `here <https://github.com/simonsobs/websky_model>`_. 
 
-The current version of the maps are of intensity in units of MJy/Sr with filename convention ``cib_ns[NSIDE]_nu[FREQ].fits`` e.g. ``cib_ns4096_nu0027.fits`` is the map of CIB intensity at 27 GHz and will be used by :py:meth:`.InterpolatingComponent` at that frequency, and can be found on NERSC at `/project/projectdirs/sobs/v4_sims/mbs/websky/data/v0.2`. There are 18 fits files at :math:`N_{side}`=4096 at frequencies [27, 39, 93, 145, 225, 280] +/- 1 GHz. These intensities were selected because in order to be able to interpolate accurately at the 6 frequencies of interest with as few maps as possible. More frequencies will be made available after a full set of map based simulations at those bands that include correlated lensing and SZ components has been implemented.
+The current version of the maps are of intensity in units of MJy/Sr with filename convention ``cib_nu[FREQ].fits`` e.g. ``cib_nu0027.fits`` is the map of CIB intensity at 27 GHz and will be used by :py:meth:`.InterpolatingComponent` at that frequency, and can be found on NERSC at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3`. There are 18 fits files at :math:`N_{side}`=4096 at frequencies [27, 39, 93, 145, 225, 280] +/- 1 GHz, in addition to those corresponding to the Planck HFI channel centers, [100, 143, 217, 353, 545, 857] GHz, for a total of 24 files. These intensities were selected because in order to be able to interpolate accurately at the 6 frequencies of interest with as few maps as possible. More frequencies will be made available after a full set of map based simulations at SO bands that include correlated lensing, CIB, and SZ effects has been generated.
 
 **Thermal SZ Effect**
 
-Provided is a map of the Compton-y parameter and is based on Battaglia et al. (2012) pressure profiles, more details `here <https://mocks.cita.utoronto.ca/websky>`_. 
+Provided is a map of the Compton-y parameter and is based on Battaglia et al. (2012) pressure profiles, and can be found at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3/tsz.fits`. More details `here <https://mocks.cita.utoronto.ca/websky>`_. 
 
 **Kinetic SZ Effect**
 
-Provided is a map of the temperature fluctuation due to line of sight peculiar velocities of electrons along the line of sight. Electrons are assumed to follow a Navarro Frenk and White (NFW) profile interior to halos and second order Lagrangian Perturbation Theory (LPT) outside, more details `here <https://mocks.cita.utoronto.ca/websky>`_.
+Provided is a map of the temperature fluctuation due to line of sight peculiar velocities of electrons along the line of sight. Electrons are assumed to follow a Navarro Frenk and White (NFW) profile interior to halos and second order Lagrangian Perturbation Theory (LPT) outside. The ksz map can be found at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3/ksz.fits`. More details `here <https://mocks.cita.utoronto.ca/websky>`_.
 
 **Lensing Convergence** 
 
