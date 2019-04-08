@@ -93,8 +93,8 @@ class WebSkySZ:
         h = 6.62607004e-27
         k = 1.380622e-16
         Tcmb = 2.725
-        x = lambda nu: h * nu * 1e9 / k / Tcmb
-        return 1e6 * Tcmb * (x(nu) * (np.exp(x(nu)) + 1) / (np.exp(x(nu)) - 1) - 4)
+        x = h * nu * 1e9 / k / Tcmb
+        return 1e6 * Tcmb * (x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4)
 
     def signal(self, nu, **kwargs):
         """Return map in uK_RJ at given frequency or array of frequencies"""
@@ -102,7 +102,6 @@ class WebSkySZ:
         if np.isscalar(nu):
             nu = np.array([nu])
 
-        m = np.zeros(12 * self.nside ** 2) + 1.0
         filename = utils.get_data_from_url(self.get_filename())
         m = pysm.read_map(
             filename,
@@ -120,10 +119,9 @@ class WebSkySZ:
 
         all_maps = np.zeros((len(nu), 1, npix), dtype=np.double)
 
-        szfac = np.zeros(len(nu)) + 1.0
+        szfac = np.ones(len(nu))
         if self.sz_type == "thermal":
-            for i in np.arange(len(nu)):
-                szfac[i] = self.y2uK_CMB(nu[i])
+            szfac = self.y2uK_CMB(nu)
 
         all_maps[:, 0, :] = np.outer(
             pysm.convert_units("uK_CMB", "uK_RJ", nu) * szfac, m
