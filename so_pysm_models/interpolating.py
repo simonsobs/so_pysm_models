@@ -63,7 +63,7 @@ class InterpolatingComponent:
                 freq = float(os.path.splitext(f)[0])
                 filenames[freq] = os.path.join(path, f)
         return filenames
-
+        
     def signal(self, nu, **kwargs):
         """Return map at given frequency or array of frequencies"""
 
@@ -104,6 +104,17 @@ class InterpolatingComponent:
 
         freq_range = self.freqs[first_freq_i:last_freq_i]
 
+        if self.interpolation_kind == 'linear':
+            # only select frequencies that are actually necessary if linear
+            nuin=self.freqs
+            usenu = np.zeros(len(nuin),dtype=bool)
+            for iout in np.arange(len(nu)):
+                for iin in np.arange(len(nuin)-1):
+                    if nuin[iin] < nu[iout] <= nuin[iin+1]:
+                        usenu[iin]=usenu[iin+1]=True
+                        
+            freq_range = nuin[usenu]
+
         if self.verbose:
             print("Frequencies considered:", freq_range)
 
@@ -143,10 +154,14 @@ class InterpolatingComponent:
             return out
 
     def read_map(self, freq):
+        filename = self.maps[freq]
+        return self.read_map_file(freq, filename)
+
+    def read_map_file(self, freq, filename):
         if self.verbose:
-            print("Reading map {}".format(self.maps[freq]))
+            print("Reading map {}".format(filename))
         m = pysm.read_map(
-            self.maps[freq],
+            filename,
             nside=self.nside,
             field=(0, 1, 2) if self.has_polarization else 0,
             pixel_indices=self.pixel_indices,
