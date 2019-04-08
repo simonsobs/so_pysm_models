@@ -4,7 +4,7 @@ High resolution templates
 :py:mod:`so_pysm_models` also provides access to templates with higher resolution and with updated
 data compared to the models included in PySM.
 
-They can be accessed with the function :py:func:`get_so_models` which works similarly to the `models`
+They can be accessed with the function :py:func:`.get_so_models` which works similarly to the `models`
 function available in PySM, and you can mix them, for example::
 
     from so_pysm_models import get_so_models
@@ -34,7 +34,7 @@ You can access the high resolution parameters at :math:`N_{side}` 4096 appending
             "synchrotron" : get_so_models("SO_s0s", nside=4096)
     })
 
-Whatever the :math:`N_{side}` of the input model and the requested :math:`N_{side}` in :py:func:`get_so_models`, PySM will automatically use :py:func:`healpy.ud_grade` to adjust the map resolution.
+Whatever the :math:`N_{side}` of the input model and the requested :math:`N_{side}` in :py:func:`.get_so_models`, PySM will automatically use :py:func:`healpy.ud_grade` to adjust the map resolution.
 
 
 Details about individual models

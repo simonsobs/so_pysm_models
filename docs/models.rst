@@ -96,7 +96,7 @@ The default parameters are optimized for SO-SAT observations. Meaning that the a
 COLines
 =======
 
-:py:class:`COLines` is not a standard PySM component because PySM does not allow to distinguish between a case where a component is evaluated for the purpose of integrating over the bandpass or evaluated for separate channels.
+:py:class:`.COLines` is not a standard PySM component because PySM does not allow to distinguish between a case where a component is evaluated for the purpose of integrating over the bandpass or evaluated for separate channels.
 Therefore this class should be instantiated choosing the desired line and summed to the output of PySM.
 For example::
 
