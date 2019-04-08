@@ -207,12 +207,12 @@ The current version of the maps are of intensity in units of MJy/Sr with filenam
 
 **Thermal SZ Effect**
 
-Provided is a map of the Compton-y parameter and is based on Battaglia et al. (2012) pressure profiles, more details `here <https://github.com/simonsobs/websky_model>`_. Not yet implemented in PySM.
+Provided is a map of the Compton-y parameter and is based on Battaglia et al. (2012) pressure profiles, more details `here <https://mocks.cita.utoronto.ca/websky>`_. 
 
 **Kinetic SZ Effect**
 
-Provided is a map of the temperature fluctuation due to line of sight peculiar velocities of electrons along the line of sight. Electrons are assumed to follow an NFW profile interior to halos and second order LPT outside, more details `here <https://github.com/simonsobs/websky_model>`_. Not yet implemented in PySM.
+Provided is a map of the temperature fluctuation due to line of sight peculiar velocities of electrons along the line of sight. Electrons are assumed to follow a Navarro Frenk and White (NFW) profile interior to halos and second order Lagrangian Perturbation Theory (LPT) outside, more details `here <https://mocks.cita.utoronto.ca/websky>`_.
 
 **Lensing Convergence** 
 
-Provided is a map of the lensing convergence due to fluctuations in the matter distribution along the line of sight. Matter is assumed to follow an NFW profile interior to halos and second order LPT outside. This convergence map is used to lense a Gaussian realization of the unlensed primary CMB, which is then read into PySM as the primary lensed CMB.
+A lensing convergence map is generated from the simulated matter distribution along the line of sight, assumed to follow an NFW profile interior to halos and second order LPT outside. This convergence map is used to lense a Gaussian realization of the unlensed primary CMB, which is then read into PySM as the primary lensed CMB through the `PrecomputedAlms class <https://so-pysm-models.readthedocs.io/en/latest/api/so_pysm_models.PrecomputedAlms.html#so_pysm_models.PrecomputedAlms>`_.
