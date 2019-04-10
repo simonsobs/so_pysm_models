@@ -6,7 +6,9 @@ import pytest
 components_dict = {comp[0]: comp for comp in ["dust", "synchrotron", "freefree", "ame"]}
 
 
-@pytest.mark.parametrize("model_tag", ["SO_d0", "SO_s0", "SO_f0", "SO_a0"])
+@pytest.mark.parametrize(
+    "model_tag", ["SO_d0", "SO_s0", "SO_f0", "SO_a0", "SO_d1", "SO_s1", "SO_a1"]
+)
 def test_get_so_models(model_tag):
     """Test the `get_so_models` function
 
