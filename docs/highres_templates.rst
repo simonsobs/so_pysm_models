@@ -62,5 +62,4 @@ Append "s" after a model name to access the :math:`N_{side}` 4096 template, i.e.
 
 * **SO_a0**: sum of two spinning dust populations (as in PySM model `a1`) with spatially constant peak frequency. No polarization.
 
-* **SO_a1**: sum of two spinning dust populations (as in PySM model `a1`). First one with spatially constant peak frequency, the other with spatially variable peak frequency up to the degree scale.
-Polarized maps simulated with thermal dust angles and nominal AME intensity scaled globally by 1% polarization fraction.
+* **SO_a1**: sum of two spinning dust populations (as in PySM model `a1`). First one with spatially constant peak frequency, the other with spatially variable peak frequency up to the degree scale. Polarized maps simulated with thermal dust angles and nominal AME intensity, scaled globally by 1% polarization fraction.
