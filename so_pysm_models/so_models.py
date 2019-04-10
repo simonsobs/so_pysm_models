@@ -70,6 +70,37 @@ def SO_d0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
         }
     ]
 
+def SO_d1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+    T_map = get_data_from_url("dust_T_ns{}.fits".format(nside_template))
+    Q_map = get_data_from_url("dust_Q_ns{}.fits".format(nside_template))
+    U_map = get_data_from_url("dust_U_ns{}.fits".format(nside_template))
+    beta_map = get_data_from_url("variable_spectral_index/beta_dust_ns{}_1deg.fits".format(nside_template))
+    temperature_map = get_data_from_url("variable_spectral_index/temperature_dust_ns{}_1deg.fits".format(nside_template))
+    A_I = read_map(
+        T_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+    )
+    return [
+        {
+            "model": "modified_black_body",
+            "nu_0_I": 545.,
+            "nu_0_P": 353.,
+            "A_I": A_I,
+            "A_Q": read_map(
+                Q_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "A_U": read_map(
+                U_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "spectral_index": read_map(
+                beta_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "temp": read_map(
+                temperature_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "add_decorrelation": False,
+        }
+    ]
+
 
 def SO_s0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     T_map = get_data_from_url("synch_T_ns{}.fits".format(nside_template))
@@ -94,6 +125,31 @@ def SO_s0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
         }
     ]
 
+def SO_s1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+    T_map = get_data_from_url("synch_T_ns{}.fits".format(nside_template))
+    Q_map = get_data_from_url("synch_Q_ns{}.fits".format(nside_template))
+    U_map = get_data_from_url("synch_U_ns{}.fits".format(nside_template))
+    beta_map = get_data_from_url("variable_spectral_index/beta_synch_ns{}_1deg.fits".format(nside_template))
+    A_I = read_map(
+        T_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+    )
+    return [
+        {
+            "model": "power_law",
+            "nu_0_I": 0.408,
+            "nu_0_P": 23.,
+            "A_I": A_I,
+            "A_Q": read_map(
+                Q_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "A_U": read_map(
+                U_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "spectral_index": read_map(
+                beta_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+        }
+    ]
 
 def SO_f0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     T_map = get_data_from_url("freefree_T_ns{}.fits".format(nside_template))
@@ -138,5 +194,56 @@ def SO_a0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
                 get_data_from_url("ame_emissivity.txt"), mpi_comm=mpi_comm, unpack=True
             ),
             "nu_peak": 33.35,
+        },
+    ]
+
+def SO_a1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
+    T_map1 = get_data_from_url("ame_T_ns{}.fits".format(nside_template))
+    T_map2 = get_data_from_url("ame2_T_ns{}.fits".format(nside_template))
+    Q_dust = get_data_from_url("dust_Q_ns{}.fits".format(nside_template))
+    U_dust = get_data_from_url("dust_U_ns{}.fits".format(nside_template))
+    nu_peak_map = get_data_from_url("variable_spectral_index/ame_nu0_peak_ns{}_1deg.fits".format(nside_template))
+    return [
+        {
+            "model": "spdust_pol",
+            "nu_0_I": 22.8,
+            "nu_0_P": 22.8,
+            "A_I": read_map(
+                T_map1, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "nu_peak_0": 30.,
+            "emissivity": loadtxt(
+                get_data_from_url("ame_emissivity.txt"), mpi_comm=mpi_comm, unpack=True
+            ),
+            'nu_peak': read_map(
+                nu_peak_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            'pol_frac': 0.01,
+            'angle_q': read_map(
+                Q_dust, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            'angle_u': read_map(
+                U_dust, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            )
+        },
+        {
+            "model": "spdust_pol",
+            "nu_0_I": 41.0,
+            "nu_0_P": 41.0,
+            "A_I": read_map(
+                T_map2, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            "nu_peak_0": 30.,
+            "emissivity": loadtxt(
+                get_data_from_url("ame_emissivity.txt"), mpi_comm=mpi_comm, unpack=True
+            ),
+            "nu_peak": 33.35,
+            'pol_frac': 0.01,
+            'angle_q': read_map(
+                Q_dust, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            ),
+            'angle_u': read_map(
+                U_dust, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
+            )
         },
     ]

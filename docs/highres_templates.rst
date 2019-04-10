@@ -46,9 +46,13 @@ Append "s" after a model name to access the :math:`N_{side}` 4096 template, i.e.
 
 * **SO_d0**: Thermal dust is modeled as a single-component modified black body, with same templates as in PySM model `d1`.  There is no spatial variation of temperature and emissivity in the sky: :math:`T=19.6` K and :math:`\beta_d=1.53` (values taken from Planck Collaboration IX 2018).
 
+* **SO_d1**: Thermal dust is modeled as a single-component modified black body, with same templates as in PySM model `d1`.  Both spectral index and dust temperature are spatially varying up to the degree scale.
+
 **Synchrotron**
 
 * **SO_s0**: Templates from PySM model `s1`. Power law spectral energy distribution, with fixed spectral index :math:`\beta_s=-3.1` (from Planck Collaboration IX 2018).
+
+* **SO_s1**: Templates from PySM model `s1`. Power law spectral energy distribution, with spatially varying spectral index up to the degree scale.
 
 **Free Free**
 
@@ -57,3 +61,5 @@ Append "s" after a model name to access the :math:`N_{side}` 4096 template, i.e.
 **AME**
 
 * **SO_a0**: sum of two spinning dust populations (as in PySM model `a1`) with spatially constant peak frequency. No polarization.
+
+* **SO_a1**: sum of two spinning dust populations (as in PySM model `a1`). First one with spatially constant peak frequency, the other with spatially variable peak frequency up to the degree scale. Polarized maps simulated with thermal dust angles and nominal AME intensity, scaled globally by 1% polarization fraction.
