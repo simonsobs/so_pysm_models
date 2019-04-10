@@ -198,7 +198,7 @@ def SO_a0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     ]
 
 def SO_a1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
-    T_map1 = get_data_from_url("ame_T_ns{}.fits".format(nside_template))
+    T_map1 = get_data_from_url("ame1_T_ns{}.fits".format(nside_template))
     T_map2 = get_data_from_url("ame2_T_ns{}.fits".format(nside_template))
     Q_dust = get_data_from_url("dust_Q_ns{}.fits".format(nside_template))
     U_dust = get_data_from_url("dust_U_ns{}.fits".format(nside_template))
