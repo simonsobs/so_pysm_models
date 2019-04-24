@@ -67,6 +67,9 @@ class InterpolatingComponent:
     def signal(self, nu, **kwargs):
         """Return map at given frequency or array of frequencies"""
 
+        if not np.isscalar(nu) and len(nu) == 1:
+            nu = nu[0]
+
         if np.isscalar(nu):
 
             # special case: we request only 1 frequency and that is among the ones
