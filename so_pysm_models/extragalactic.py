@@ -39,7 +39,7 @@ class WebSkyCIB(InterpolatingComponent):
         verbose=False,
     ):
         super().__init__(
-            websky_version,
+            str(websky_version),
             input_units,
             target_nside,
             interpolation_kind,
@@ -90,7 +90,7 @@ class WebSkySZ:
         verbose=False,
     ):
 
-        self.version = version
+        self.version = str(version)
         self.sz_type = sz_type
         self.nside = target_nside
         self.pixel_indices = pixel_indices
