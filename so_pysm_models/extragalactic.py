@@ -140,4 +140,9 @@ class WebSkySZ:
             pysm.convert_units("uK_CMB", "uK_RJ", nu) * szfac, m
         )
 
-        return all_maps
+        # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
+        # we return only a 2D array.
+        if len(all_maps) == 1:
+            return all_maps[0]
+        else:
+            return all_maps
