@@ -1,5 +1,6 @@
 import numpy as np
 
+import pysm.units as u
 from .. import get_so_models
 import pytest
 
@@ -28,9 +29,8 @@ def test_get_so_models(model_tag):
     from pysm import Sky
 
     component_name = components_dict[model_tag.split("_")[1][0]]
-    sky = Sky({component_name: get_so_models(model_tag, nside=128)})
-    component = getattr(sky, component_name)
-    emission = component(nu=100)
+    sky = Sky(nside=128, component_objects=[get_so_models(model_tag, nside=128)])
+    emission = sky.get_emission(freq=100 * u.GHz)))
     assert not np.any(np.isnan(emission))
     # Compare I and Q at pixel 100
     for IQ in [0, 1]:
