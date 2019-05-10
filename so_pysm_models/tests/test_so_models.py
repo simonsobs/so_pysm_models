@@ -35,4 +35,7 @@ def test_get_so_models(model_tag):
     assert not np.any(np.isnan(emission))
     # Compare I and Q at pixel 100
     for IQ in [0, 1]:
-        assert_quantity_allclose(emission[IQ][98969], expected[model_tag][IQ]*u.uK_RJ)
+        if expected[model_tag][IQ] != 0:
+            assert_quantity_allclose(
+                emission[IQ][98969], expected[model_tag][IQ] * u.uK_RJ
+            )

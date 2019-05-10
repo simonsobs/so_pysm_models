@@ -5,8 +5,11 @@ import os
 from astropy.utils import data
 from pysm import read_map
 import pysm.units as u
+
+
 def loadtxt(*args):
     pass
+
 
 DATAURL = "http://portal.nersc.gov/project/cmb/so_pysm_models_data/"
 PREDEFINED_DATA_FOLDERS = ["/global/project/projectdirs/cmb/www/so_pysm_models_data"]
