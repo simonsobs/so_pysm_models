@@ -71,31 +71,23 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
             pixel_indices=pixel_indices,
             mpi_comm=mpi_comm,
         )
+    elif key == "SO_s0":
+        model = pysm.PowerLaw(
+            map_I=get_data_from_url("synch_T_ns{}.fits".format(nside_template)),
+            map_Q=get_data_from_url("synch_Q_ns{}.fits".format(nside_template)),
+            map_U=get_data_from_url("synch_U_ns{}.fits".format(nside_template)),
+            freq_ref_I=408 * u.MHz,
+            freq_ref_P=23 * u.GHz,
+            map_pl_index=-3.1,
+            nside=nside,
+            unit_I=u.uK_RJ,
+            unit_Q=u.uK_RJ,
+            unit_U=u.uK_RJ,
+            pixel_indices=pixel_indices,
+            mpi_comm=mpi_comm,
+        )
     return model
 
-
-def SO_s0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
-    T_map = get_data_from_url("synch_T_ns{}.fits".format(nside_template))
-    Q_map = get_data_from_url("synch_Q_ns{}.fits".format(nside_template))
-    U_map = get_data_from_url("synch_U_ns{}.fits".format(nside_template))
-    A_I = read_map(
-        T_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-    )
-    return [
-        {
-            "model": "power_law",
-            "nu_0_I": 0.408,
-            "nu_0_P": 23.,
-            "A_I": A_I,
-            "A_Q": read_map(
-                Q_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-            ),
-            "A_U": read_map(
-                U_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-            ),
-            "spectral_index": np.ones(len(A_I)) * -3.1,
-        }
-    ]
 
 def SO_s1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     T_map = get_data_from_url("synch_T_ns{}.fits".format(nside_template))
