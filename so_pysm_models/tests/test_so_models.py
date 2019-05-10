@@ -2,6 +2,7 @@ import numpy as np
 
 import pysm.units as u
 from .. import get_so_models
+from astropy.tests.helper import assert_quantity_allclose
 import pytest
 
 components_dict = {comp[0]: comp for comp in ["dust", "synchrotron", "freefree", "ame"]}
@@ -30,8 +31,8 @@ def test_get_so_models(model_tag):
 
     component_name = components_dict[model_tag.split("_")[1][0]]
     sky = Sky(nside=128, component_objects=[get_so_models(model_tag, nside=128)])
-    emission = sky.get_emission(freq=100 * u.GHz)))
+    emission = sky.get_emission(freq=100 * u.GHz)[0]
     assert not np.any(np.isnan(emission))
     # Compare I and Q at pixel 100
     for IQ in [0, 1]:
-        assert emission[IQ][98969] == pytest.approx(expected[model_tag][IQ])
+        assert_quantity_allclose(emission[IQ][98969], expected[model_tag][IQ]*u.uK_RJ)
