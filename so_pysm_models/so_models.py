@@ -53,39 +53,25 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
             pixel_indices=pixel_indices,
             mpi_comm=mpi_comm,
         )
+    elif key == "SO_d1":
+        model = pysm.ModifiedBlackBody(
+            get_data_from_url("dust_T_ns{}.fits".format(nside_template)),
+            get_data_from_url("dust_Q_ns{}.fits".format(nside_template)),
+            get_data_from_url("dust_U_ns{}.fits".format(nside_template)),
+            freq_ref_I=545 * u.GHz,
+            freq_ref_P=353 * u.GHz,
+            map_mbb_index=get_data_from_url("variable_spectral_index/beta_dust_ns{}_1deg.fits".format(nside_template)),
+            map_mbb_temperature=get_data_from_url("variable_spectral_index/temperature_dust_ns{}_1deg.fits".format(nside_template)),
+            nside=nside,
+            has_polarization=True,
+            unit_I=u.uK_RJ,
+            unit_Q=u.uK_RJ,
+            unit_U=u.uK_RJ,
+            unit_mbb_temperature=u.K,
+            pixel_indices=pixel_indices,
+            mpi_comm=mpi_comm,
+        )
     return model
-
-
-def SO_d1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
-    T_map = get_data_from_url("dust_T_ns{}.fits".format(nside_template))
-    Q_map = get_data_from_url("dust_Q_ns{}.fits".format(nside_template))
-    U_map = get_data_from_url("dust_U_ns{}.fits".format(nside_template))
-    beta_map = get_data_from_url("variable_spectral_index/beta_dust_ns{}_1deg.fits".format(nside_template))
-    temperature_map = get_data_from_url("variable_spectral_index/temperature_dust_ns{}_1deg.fits".format(nside_template))
-    A_I = read_map(
-        T_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-    )
-    return [
-        {
-            "model": "modified_black_body",
-            "nu_0_I": 545.,
-            "nu_0_P": 353.,
-            "A_I": A_I,
-            "A_Q": read_map(
-                Q_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-            ),
-            "A_U": read_map(
-                U_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-            ),
-            "spectral_index": read_map(
-                beta_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-            ),
-            "temp": read_map(
-                temperature_map, nside, field=0, pixel_indices=pixel_indices, mpi_comm=mpi_comm
-            ),
-            "add_decorrelation": False,
-        }
-    ]
 
 
 def SO_s0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
