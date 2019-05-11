@@ -37,5 +37,5 @@ def test_get_so_models(model_tag):
     for IQ in [0, 1]:
         if expected[model_tag][IQ] != 0:
             assert_quantity_allclose(
-                emission[IQ][98969], expected[model_tag][IQ] * u.uK_RJ
+                emission[IQ][98969], expected[model_tag][IQ] * u.uK_RJ,
             )
