@@ -159,11 +159,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
                     map_I=get_data_from_url("ame2_T_ns{}.fits".format(nside_template)),
                     freq_ref_I=41.0 * u.GHz,
                     emissivity=get_data_from_url("ame_emissivity.txt"),
-                    freq_peak=get_data_from_url(
-                        "variable_spectral_index/ame_nu0_peak_ns{}_1deg.fits".format(
-                            nside_template
-                        )
-                    ),
+                    freq_peak=33.35 * u.GHz,
                     freq_ref_peak=30 * u.GHz,
                     pol_frac=0.01,
                     angle_Q=get_data_from_url(
