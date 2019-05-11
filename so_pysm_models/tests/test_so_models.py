@@ -5,15 +5,15 @@ import pytest
 
 components_dict = {comp[0]: comp for comp in ["dust", "synchrotron", "freefree", "ame"]}
 
-# Expected I and Q emission in uK_RJ at pixel 100
+# Expected I and Q emission in uK_RJ at pixel 98969
 expected = {
-    "SO_a1": [0.0004612855020969098, 4.015659454536007e-06],
-    "SO_s1": [0.3903231775760541, -0.024661686876035677],
-    "SO_d1": [1.5400970036635495, 0.044328112549527524],
-    "SO_a0": [0.0004949370177550887, 0.0],
-    "SO_f0": [0.2165784407714049, 0.0],
-    "SO_s0": [0.4133453059990284, -0.02504213606690909],
-    "SO_d0": [1.9386241336315098, 0.05124213250215371],
+    "SO_a1": [2.7826194464298837,0.025349571461346275],
+    "SO_s1": [9.512234698510888,-0.020188138587129197],
+    "SO_d1": [747.7160343440288,3.7430164427988215],
+    "SO_a0": [1.4868411735277658,0.0],
+    "SO_f0": [4525.092680419471,0.0],
+    "SO_s0": [11.756732686207846,-0.021363560253508863],
+    "SO_d0": [921.4452792523148,4.369898779380189],
 }
 
 
@@ -34,4 +34,4 @@ def test_get_so_models(model_tag):
     assert not np.any(np.isnan(emission))
     # Compare I and Q at pixel 100
     for IQ in [0, 1]:
-        assert emission[IQ][100] == pytest.approx(expected[model_tag][IQ])
+        assert emission[IQ][98969] == pytest.approx(expected[model_tag][IQ])
