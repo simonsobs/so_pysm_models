@@ -8,7 +8,10 @@ from astropy.utils import data
 import warnings
 
 DATAURL = "http://portal.nersc.gov/project/cmb/so_pysm_models_data/"
-PREDEFINED_DATA_FOLDERS = ["/global/project/projectdirs/cmb/www/so_pysm_models_data"]
+PREDEFINED_DATA_FOLDERS = [
+    "/global/project/projectdirs/cmb/www/so_pysm_models_data",  # NERSC
+    "/simons/scratch/zonca/simonsobs/so_pysm_models_data",  # SDSC
+]
 
 
 def get_data_from_url(filename):
