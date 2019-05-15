@@ -14,7 +14,7 @@ def test_precomputed_alms():
     nside = 32
     # Make an IQU sim
     precomputed_alms = PrecomputedAlms(
-        alms_filename, target_nside=nside, input_units="uK_RJ",
+        alms_filename, nside=nside, input_units="uK_RJ",
         input_reference_frequency_GHz=148, has_polarization=True
     )
     simulated_map = precomputed_alms.signal()

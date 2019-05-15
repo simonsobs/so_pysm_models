@@ -11,7 +11,7 @@ from . import filter_utils
 class GaussianDust:
     def __init__(
         self,
-        target_nside,
+        nside,
         has_polarization=True,
         pixel_indices=None,
         TT_amplitude=350.0,
@@ -31,7 +31,7 @@ class GaussianDust:
 
         Parameters
         ----------
-        target_nside : int
+        nside : int
             HEALPix NSIDE of the output maps
         has_polarization : bool
             whether or not to simulate also polarization maps
@@ -70,7 +70,7 @@ class GaussianDust:
             Default: None
         """
 
-        self.target_nside = target_nside
+        self.nside = nside
         self.pixel_indices = pixel_indices
         self.has_polarization = has_polarization
         self.TT_amplitude = TT_amplitude
@@ -86,7 +86,7 @@ class GaussianDust:
     def signal(self, nu, **kwargs):
         """Return map in uK_RJ at given frequency or array of frequencies"""
 
-        nell = 3 * self.target_nside
+        nell = 3 * self.nside
         try:
             nnu = len(nu)
         except TypeError:
@@ -120,8 +120,8 @@ class GaussianDust:
         else:
             mseed = self.seed
         np.random.seed(mseed)
-        if self.target_nside <= 64:
-            nside_temp = self.target_nside
+        if self.nside <= 64:
+            nside_temp = self.nside
         else:
             nside_temp = 64
         amp_dust = np.array(
@@ -149,7 +149,7 @@ class GaussianDust:
             )
             amp_dust[0] = amp_dust[0] + self.Toffset
             lbreak_TT += 1
-        if self.target_nside > 64:
+        if self.nside > 64:
             low_pass_filter = filter_utils.create_low_pass_filter(l1=30, l2=60, lmax=64 * 3 - 1)
             high_pass_filter = filter_utils.create_high_pass_filter(l1=30, l2=60, lmax=nell - 1)
             clTT_dust_hpf = clTT_dust * high_pass_filter
@@ -158,13 +158,13 @@ class GaussianDust:
             amp_dust_hell = np.array(
                 hp.synfast(
                     [clTT_dust_hpf, clEE_dust, clBB_dust, clZERO, clZERO, clZERO],
-                    self.target_nside,
+                    self.nside,
                     pol=True,
                     new=True,
                     verbose=False,
                 )
             )
-            amp_dust = hp.ud_grade(amp_dust, self.target_nside)
+            amp_dust = hp.ud_grade(amp_dust, self.nside)
             amp_dust[1:3] = amp_dust[1:3] * 0.0
             amp_dust += amp_dust_hell
         min_map = np.min(amp_dust[0])

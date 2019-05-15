@@ -32,7 +32,7 @@ class WebSkyCIB(InterpolatingComponent):
         self,
         websky_version="0.3",
         input_units="MJysr",
-        target_nside=4096,
+        nside=4096,
         interpolation_kind="linear",
         pixel_indices=None,
         mpi_comm=None,
@@ -41,7 +41,7 @@ class WebSkyCIB(InterpolatingComponent):
         super().__init__(
             str(websky_version),
             input_units,
-            target_nside,
+            nside,
             interpolation_kind,
             has_polarization=False,
             pixel_indices=pixel_indices,
@@ -84,7 +84,7 @@ class WebSkySZ:
         self,
         version="0.3",
         sz_type="kinetic",
-        target_nside=4096,
+        nside=4096,
         pixel_indices=None,
         mpi_comm=None,
         verbose=False,
@@ -92,7 +92,7 @@ class WebSkySZ:
 
         self.version = str(version)
         self.sz_type = sz_type
-        self.nside = target_nside
+        self.nside = nside
         self.pixel_indices = pixel_indices
         self.mpi_comm = mpi_comm
         self.verbose = verbose

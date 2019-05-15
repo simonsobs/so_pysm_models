@@ -34,7 +34,7 @@ def test_ksz(tmp_path, monkeypatch):
     hp.write_map(path / "ksz.fits", np.ones(shape, dtype=np.float32))
     hp.write_map(path / "cib_0100.fits", np.ones(shape, dtype=np.float32))
 
-    ksz = WebSkySZ("0.3", sz_type="kinetic", target_nside=nside)
+    ksz = WebSkySZ("0.3", sz_type="kinetic", nside=nside)
 
     ksz_map = ksz.signal(nu=100)
     np.testing.assert_allclose(
@@ -52,7 +52,7 @@ def test_tsz(tmp_path, monkeypatch):
     hp.write_map(path / "tsz.fits", np.ones(shape, dtype=np.float32)*1e-6)
     hp.write_map(path / "cib_0100.fits", np.ones(shape, dtype=np.float32))
 
-    tsz = WebSkySZ("0.3", sz_type="thermal", target_nside=nside)
+    tsz = WebSkySZ("0.3", sz_type="thermal", nside=nside)
 
     tsz_map = tsz.signal(nu=100)
     np.testing.assert_allclose(

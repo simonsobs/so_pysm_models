@@ -14,7 +14,7 @@ class PrecomputedAlms:
         filename,
         input_units="uK_CMB",
         input_reference_frequency_GHz=None,
-        target_nside=None,
+        nside=None,
         target_shape=None,
         target_wcs=None,
         precompute_output_map=True,
@@ -38,7 +38,7 @@ class PrecomputedAlms:
             Input unit strings as defined by pysm.convert_units, e.g. K_CMB, uK_RJ, MJysr
         input_reference_frequency_GHz : float
             If input units are K_RJ or Jysr, the reference frequency
-        target_nside : int
+        nside : int
             HEALPix NSIDE of the output maps
         precompute_output_map : bool
             If True (default), Alms are transformed into a map in the constructor,
@@ -52,7 +52,7 @@ class PrecomputedAlms:
             Output a partial maps given HEALPix pixel indices in RING ordering
         """
 
-        self.nside = target_nside
+        self.nside = nside
         self.shape = target_shape
         self.wcs = target_wcs
         self.filename = filename

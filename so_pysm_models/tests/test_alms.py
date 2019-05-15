@@ -42,7 +42,7 @@ def test_precomputed_alms(setup):
 
     precomputed_alms = PrecomputedAlms(
         filename=filename_K_RJ,
-        target_nside=nside,
+        nside=nside,
         input_units="uK_RJ",
         input_reference_frequency_GHz=ref_freq,
     )
@@ -70,7 +70,7 @@ def test_precomputed_alms_K_CMB(setup):
     nside = 64
     test_map = hp.alm2map(alms, nside=nside)
     precomputed_alms = PrecomputedAlms(
-        filename=filename, target_nside=nside, input_units="K_CMB"
+        filename=filename, nside=nside, input_units="K_CMB"
     )
 
     freqs = np.array([1, 10, 100])

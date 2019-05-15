@@ -11,7 +11,7 @@ from . import filter_utils
 class GaussianSynchrotron:
     def __init__(
         self,
-        target_nside,
+        nside,
         has_polarization=True,
         pixel_indices=None,
         TT_amplitude=20.0,
@@ -31,7 +31,7 @@ class GaussianSynchrotron:
 
         Parameters
         ----------
-        target_nside : int
+        nside : int
             HEALPix NSIDE of the output maps
         has_polarization : bool
             whether or not to simulate also polarization maps
@@ -71,7 +71,7 @@ class GaussianSynchrotron:
             Default: None
         """
 
-        self.target_nside = target_nside
+        self.nside = nside
         self.pixel_indices = pixel_indices
         self.has_polarization = has_polarization
         self.TT_amplitude = TT_amplitude
@@ -87,7 +87,7 @@ class GaussianSynchrotron:
     def signal(self, nu, **kwargs):
         """Return map in uK_RJ at given frequency or array of frequencies"""
 
-        nell = 3 * self.target_nside
+        nell = 3 * self.nside
         try:
             nnu = len(nu)
         except TypeError:
@@ -121,8 +121,8 @@ class GaussianSynchrotron:
         else:
             mseed = self.seed
         np.random.seed(mseed)
-        if self.target_nside <= 64:
-            nside_temp = self.target_nside
+        if self.nside <= 64:
+            nside_temp = self.nside
         else:
             nside_temp = 64
         amp_sync = np.array(
@@ -150,7 +150,7 @@ class GaussianSynchrotron:
             )
             amp_sync[0] += self.Toffset
             lbreak_TT += 1
-        if self.target_nside > 64:
+        if self.nside > 64:
             low_pass_filter = filter_utils.create_low_pass_filter(l1=30, l2=60, lmax=64 * 3 - 1)
             high_pass_filter = filter_utils.create_high_pass_filter(l1=30, l2=60, lmax=nell - 1)
             clTT_sync_hpf = clTT_sync * high_pass_filter
@@ -159,13 +159,13 @@ class GaussianSynchrotron:
             amp_sync_hell = np.array(
                 hp.synfast(
                     [clTT_sync_hpf, clEE_sync, clBB_sync, clZERO, clZERO, clZERO],
-                    self.target_nside,
+                    self.nside,
                     pol=True,
                     new=True,
                     verbose=False,
                 )
             )
-            amp_sync = hp.ud_grade(amp_sync, self.target_nside)
+            amp_sync = hp.ud_grade(amp_sync, self.nside)
             amp_sync[1:3] = amp_sync[1:3] * 0.0
             amp_sync += amp_sync_hell
         min_map = np.min(amp_sync[0])

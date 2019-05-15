@@ -10,7 +10,7 @@ from .utils import get_data_from_url
 class COLines:
     def __init__(
         self,
-        target_nside,
+        nside,
         output_units,
         has_polarization=True,
         line="10",
@@ -30,7 +30,7 @@ class COLines:
 
         Parameters
         ----------
-        target_nside : int
+        nside : int
             HEALPix NSIDE of the output maps
         output_units : str
             unit string as defined by `pysm.convert_units`, e.g. uK_RJ, K_CMB
@@ -62,9 +62,9 @@ class COLines:
         self.line = line
         self.line_index = {"10": 0, "21": 1, "32": 2}[line]
         self.line_frequency = {"10": 115.271, "21": 230.538, "32": 345.796}[line]
-        self.target_nside = target_nside
+        self.nside = nside
 
-        self.template_nside = 512 if self.target_nside <= 512 else 2048
+        self.template_nside = 512 if self.nside <= 512 else 2048
 
         self.pixel_indices = pixel_indices
         self.mpi_comm = mpi_comm
@@ -91,7 +91,7 @@ class COLines:
     def read_map(self, fname, field=None):
         return read_map(
             get_data_from_url(fname),
-            nside=self.target_nside,
+            nside=self.nside,
             field=field,
             pixel_indices=self.pixel_indices,
             mpi_comm=self.mpi_comm,
@@ -102,7 +102,7 @@ class COLines:
         """
         Simulate CO signal
         """
-        out = hp.ud_grade(map_in=self.planck_templatemap, nside_out=self.target_nside)
+        out = hp.ud_grade(map_in=self.planck_templatemap, nside_out=self.nside)
 
         if self.include_high_galactic_latitude_clouds:
             out += self.simulate_high_galactic_latitude_CO()
@@ -126,9 +126,9 @@ class COLines:
         polangle = self.read_map("co/psimap_dust90_{}.fits".format(self.template_nside))
         depolmap = self.read_map("co/gmap_dust90_{}.fits".format(self.template_nside))
 
-        if hp.get_nside(depolmap) != self.target_nside:
-            polangle = hp.ud_grade(map_in=polangle, nside_out=self.target_nside)
-            depolmap = hp.ud_grade(map_in=depolmap, nside_out=self.target_nside)
+        if hp.get_nside(depolmap) != self.nside:
+            polangle = hp.ud_grade(map_in=polangle, nside_out=self.nside)
+            depolmap = hp.ud_grade(map_in=depolmap, nside_out=self.nside)
 
         cospolangle = np.cos(2. * polangle)
         sinpolangle = np.sin(2. * polangle)
@@ -159,7 +159,7 @@ class COLines:
             R_em = 6.6
             model = "LogSpiral"
 
-            nside = self.target_nside
+            nside = self.nside
             Itot_o, _ = cl.integrate_intensity_map(
                 self.planck_templatemap,
                 hp.get_nside(self.planck_templatemap),

@@ -12,7 +12,7 @@ def test_gaussian_synchrotron():
     test_map = hp.read_map(test_map_filename, (0, 1, 2))
 
     nside = hp.npix2nside(len(test_map[0]))
-    gaussian_synch = GaussianSynchrotron(target_nside=nside, seed=31)
+    gaussian_synch = GaussianSynchrotron(nside=nside, seed=31)
     m = gaussian_synch.signal(23)
 
     np.testing.assert_allclose(m, test_map)
