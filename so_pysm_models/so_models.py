@@ -5,30 +5,7 @@ import os
 from astropy.utils import data
 from pysm import read_map
 import pysm.units as u
-
-
-def loadtxt(*args):
-    pass
-
-
-DATAURL = "http://portal.nersc.gov/project/cmb/so_pysm_models_data/"
-PREDEFINED_DATA_FOLDERS = ["/global/project/projectdirs/cmb/www/so_pysm_models_data"]
-
-
-def get_data_from_url(filename):
-    """Retrieves input templates from remote server,
-    in case data is available in one of the PREDEFINED_DATA_FOLDERS defined above,
-    e.g. at NERSC, those are directly returned."""
-    for folder in PREDEFINED_DATA_FOLDERS:
-        full_path = os.path.join(folder, filename)
-        if os.path.exists(full_path):
-            return full_path
-    with data.conf.set_temp("dataurl", DATAURL), data.conf.set_temp(
-        "remote_timeout", 30
-    ):
-        map_out = data.get_pkg_data_filename(filename, show_progress=True)
-    return map_out
-
+from .utils import get_data_from_url
 
 def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
     small_scale = key.endswith("s")
