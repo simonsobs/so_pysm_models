@@ -8,6 +8,7 @@ dependencies:
     - python>=3.6
     - astropy
     - numba
+    - toml
     - Cython
     - matplotlib
     - numpy
