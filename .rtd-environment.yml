@@ -13,4 +13,4 @@ dependencies:
     - sphinx-astropy
     - healpy
     - pip:
-        - https://github.com/zonca/PySM_public/archive/pysm_light.zip
+        - https://github.com/healpy/pysm/archive/master.zip
