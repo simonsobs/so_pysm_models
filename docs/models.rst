@@ -1,5 +1,5 @@
 Summary of Models
-**********************
+*****************
 
 This page contains high-level documentation about the available models,
 check the classes doc strings, or the `online documentation <https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/index.html#classes>`_, for the specific arguments.
@@ -25,16 +25,16 @@ Spectra are defined by:
 Stokes Q and U maps are generated as random realization of the polarization spectra. For the temperature map the situation is slightly different as we want the total intensity map to be positive everywhere.
 The Stokes I map is generated in the following way:
 
-if target :math:`N_{side}`<=64:
+if target :math:`N_{side}<=64`:
     1. The TT power spectrum is  :math:`C_\ell \propto \ell^\alpha` and :math:`C_\ell[0]=0`
     2. A first temperature map T is generated as a gaussian realization of this power spectrum
     3. A new map is obtained by adding to T an offset whose value is taken from a reference map
     4. If T+offset is positive everywhere than this is the output temperature map
     5. Otherwise a cut in the TT power spectrum is applied in the following way: :math:`C_\ell[1:\ell_{cut}] = C_\ell[\ell_{cut}]`
-    6. A new T+offset map is generated. The value of :math:`\ell_{cut}` is the minimum one for which T+offset is positive everywhere
+    6. A new :math:`T+offset` map is generated. The value of :math:`\ell_{cut}` is the minimum one for which :math:`T+offset` is positive everywhere
 
-if target :math:`N_{side}`>64:
-    1. a map at :math:`N_{side}`=64 is generated following the procedure above and then filtered to retain only large angular scales (ell<30)
+if target :math:`N_{side}>64`:
+    1. a map at :math:`N_{side}=64` is generated following the procedure above and then filtered to retain only large angular scales (ell<30)
     2. a map at the target :math:`N_{side}` is generated including only small scales (ell>30) with the same seed as the map at point 1.
     3. the two maps are added together
     4. In case the co-added map still has negative pixels a small offset is added to make it positive everywhere
@@ -67,16 +67,16 @@ Spectra are defined by:
 Stokes Q and U maps are generated as random realization of the polarization spectra. For the temperature map the situation is slightly different as we want the total intensity map to be positive everywhere.
 The Stokes I map is generated in the following way:
 
-if target :math:`N_{side}`<=64:
+if target :math:`N_{side}<=64`:
     1. The TT power spectrum is  :math:`C_\ell \propto \ell^\alpha` and :math:`C_\ell[0]=0`
     2. A first temperature map T is generated as a gaussian realization of this power spectrum
     3. A new map is obtained by adding to T an offset whose value is taken from a reference map
     4. If T+offset is positive everywhere than this is the output temperature map
     5. Otherwise a cut in the TT power spectrum is applied in the following way: :math:`C_\ell[1:\ell_{cut}] = C_\ell[\ell_{cut}]`
-    6. A new T+offset map is generated. The value of :math:`\ell_{cut}` is the minimum one for which T+offset is positive everywhere
+    6. A new :math:`T+offset` map is generated. The value of :math:`\ell_{cut}` is the minimum one for which :math:`T+offset` is positive everywhere.
 
-if target :math:`N_{side}`>64:
-    1. a map at :math:`N_{side}`=64 is generated following the procedure above and then filtered to retain only large angular scales (ell<30)
+if target :math:`N_{side}>64`:
+    1. a map at :math:`N_{side}=64` is generated following the procedure above and then filtered to retain only large angular scales (ell<30)
     2. a map at the target :math:`N_{side}` is generated including only small scales (ell>30) with the same seed as the map at point 1.
     3. the two maps are added together
     4. In case the co-added map still has negative pixels a small offset is added to make it positive everywhere
@@ -203,15 +203,15 @@ Specific maps generated for so_pysm_models are described below and located on NE
 
 The Planck (2013) CIB halo model is used, along with a halo occupation distribution. More details can be found `here <https://github.com/simonsobs/websky_model>`_. 
 
-The current version of the maps are of intensity in units of MJy/Sr with filename convention ``cib_nu[FREQ].fits`` e.g. ``cib_nu0027.fits`` is the map of CIB intensity at 27 GHz and will be used by :py:meth:`.InterpolatingComponent` at that frequency, and can be found on NERSC at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3`. There are 18 fits files at :math:`N_{side}`=4096 at frequencies [27, 39, 93, 145, 225, 280] +/- 1 GHz, in addition to those corresponding to the Planck HFI channel centers, [100, 143, 217, 353, 545, 857] GHz, for a total of 24 files. These intensities were selected because in order to be able to interpolate accurately at the 6 frequencies of interest with as few maps as possible. More frequencies will be made available after a full set of map based simulations at SO bands that include correlated lensing, CIB, and SZ effects has been generated.
+The current version of the maps are of intensity in units of :math:`MJy/Sr` with filename convention ``cib_nu[FREQ].fits`` e.g. ``cib_nu0027.fits`` is the map of CIB intensity at 27 GHz and will be used by :py:meth:`.InterpolatingComponent` at that frequency, and can be found on NERSC at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3`. There are 18 fits files at :math:`N_{side}=4096` at frequencies [27, 39, 93, 145, 225, 280] +/- 1 GHz, in addition to those corresponding to the Planck HFI channel centers, [100, 143, 217, 353, 545, 857] GHz, for a total of 24 files. These intensities were selected because in order to be able to interpolate accurately at the 6 frequencies of interest with as few maps as possible. More frequencies will be made available after a full set of map based simulations at SO bands that include correlated lensing, CIB, and SZ effects has been generated.
 
 **Thermal SZ Effect**
 
-Provided is a map of the Compton-y parameter and is based on Battaglia et al. (2012) pressure profiles, and can be found at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3/tsz.fits`. More details `here <https://mocks.cita.utoronto.ca/websky>`_. 
+Provided is a map of the Compton-y parameter and is based on Battaglia et al. (2012) pressure profiles, and can be found at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3/tsz.fits`.
 
 **Kinetic SZ Effect**
 
-Provided is a map of the temperature fluctuation due to line of sight peculiar velocities of electrons along the line of sight. Electrons are assumed to follow a Navarro Frenk and White (NFW) profile interior to halos and second order Lagrangian Perturbation Theory (LPT) outside. The ksz map can be found at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3/ksz.fits`. More details `here <https://mocks.cita.utoronto.ca/websky>`_.
+Provided is a map of the temperature fluctuation due to line of sight peculiar velocities of electrons along the line of sight. Electrons are assumed to follow a Navarro Frenk and White (NFW) profile interior to halos and second order Lagrangian Perturbation Theory (LPT) outside. The ksz map can be found at `/project/projectdirs/sobs/v4_sims/mbs/websky/0.3/ksz.fits`.
 
 **Lensing Convergence** 
 
