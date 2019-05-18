@@ -12,6 +12,7 @@ dependencies:
     - Cython
     - matplotlib
     - numpy
+    - pip
     - sphinx-astropy
     - healpy
     - pip:
