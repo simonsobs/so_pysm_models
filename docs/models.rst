@@ -168,6 +168,8 @@ See the `documentation about mapsims <https://mapsims.readthedocs.io>`_ about sp
 InterpolatingComponent
 ======================
 
+**Moved to PySM 3, FIXME port this documentation over**
+
 Adds a custom emission to the sky simulated by PySM defined as a set of template maps at pre-defined frequencies to be interpolated at the frequencies requested through PySM.
 
 **Inputs**

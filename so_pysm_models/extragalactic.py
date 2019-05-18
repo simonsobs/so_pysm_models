@@ -1,8 +1,10 @@
-from . import InterpolatingComponent
+from pysm import InterpolatingComponent, Model
+from pysm import units as u
 from . import utils
 import pysm
 import numpy as np
 import healpy as hp
+import os.path
 
 
 def y2uK_CMB(nu):
@@ -37,7 +39,9 @@ class WebSkyCIB(InterpolatingComponent):
         pixel_indices=None,
         mpi_comm=None,
         verbose=False,
+        local_folder=None
     ):
+        self.local_folder = local_folder
         super().__init__(
             str(websky_version),
             input_units,
@@ -70,31 +74,33 @@ class WebSkyCIB(InterpolatingComponent):
                 freq: "websky/0.3/cib_{:04d}.fits".format(freq)
                 for freq in available_frequencies
             }
+        if self.local_folder is not None:
+            for freq in filenames:
+                filenames[freq] = os.path.join(self.local_folder, filenames[freq])
+
 
         return filenames
 
-    def read_map(self, freq):
+    def read_map_by_freq(self, freq):
         filename = utils.get_data_from_url(self.maps[freq])
         return self.read_map_file(freq, filename)
 
 
-class WebSkySZ:
+class WebSkySZ(Model):
 
     def __init__(
         self,
         version="0.3",
         sz_type="kinetic",
-        target_nside=4096,
+        nside=4096,
         pixel_indices=None,
         mpi_comm=None,
         verbose=False,
     ):
 
+        super().__init__(nside=nside, pixel_indices=pixel_indices, mpi_comm=mpi_comm)
         self.version = str(version)
         self.sz_type = sz_type
-        self.nside = target_nside
-        self.pixel_indices = pixel_indices
-        self.mpi_comm = mpi_comm
         self.verbose = verbose
 
     def get_filename(self):
@@ -109,19 +115,19 @@ class WebSkySZ:
 
         return filename
 
-    def signal(self, nu, **kwargs):
-        """Return map in uK_RJ at given frequency or array of frequencies"""
+    @u.quantity_input
+    def get_emission(self, freqs: u.GHz) -> u.uK_RJ:
 
-        if np.isscalar(nu):
-            nu = np.array([nu])
+        nu = freqs.to(u.GHz)
+
+        if nu.isscalar:
+            nu = nu.reshape(1)
 
         filename = utils.get_data_from_url(self.get_filename())
-        m = pysm.read_map(
+        m = self.read_map(
             filename,
-            nside=self.nside,
             field=0,
-            pixel_indices=self.pixel_indices,
-            mpi_comm=self.mpi_comm,
+            unit=u.uK_CMB
         )
 
         npix = (
@@ -132,17 +138,13 @@ class WebSkySZ:
 
         all_maps = np.zeros((len(nu), 1, npix), dtype=np.double)
 
-        szfac = np.ones(len(nu))
+        szfac = np.ones(len(nu)) * u.uK_CMB
         if self.sz_type == "thermal":
-            szfac = y2uK_CMB(nu)
+            szfac *= y2uK_CMB(nu.value)
 
         all_maps[:, 0, :] = np.outer(
-            pysm.convert_units("uK_CMB", "uK_RJ", nu) * szfac, m
+            szfac.to(u.uK_RJ, equivalencies=u.cmb_equivalencies(nu)), m
         )
 
-        # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
-        # we return only a 2D array.
-        if len(all_maps) == 1:
-            return all_maps[0]
-        else:
-            return all_maps
+        # the output of out is always 3D, (num_freqs, IQU, npix)
+        return all_maps * u.uK_RJ
