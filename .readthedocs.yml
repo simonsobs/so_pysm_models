@@ -1,5 +1,11 @@
+version: 2
+
+sphinx:
+    configuration: docs/conf.py
+    fail_on_warning: false
+
 conda:
-  file: .rtd-environment.yml
+    environment: environment.yml
 
 python:
-   setup_py_install: true
+   version: 3.7
