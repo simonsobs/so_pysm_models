@@ -1,5 +1,6 @@
 from pysm import InterpolatingComponent, Model
 from pysm import units as u
+from .alms import PrecomputedAlms
 from . import utils
 import pysm
 import numpy as np
@@ -33,25 +34,26 @@ class WebSkyCIB(InterpolatingComponent):
     def __init__(
         self,
         websky_version="0.3",
-        input_units="MJysr",
-        target_nside=4096,
+        input_units="MJy / sr",
+        nside=4096,
         interpolation_kind="linear",
         pixel_indices=None,
         mpi_comm=None,
         verbose=False,
-        local_folder=None
+        local_folder=None,
     ):
         self.local_folder = local_folder
         super().__init__(
             str(websky_version),
             input_units,
-            target_nside,
+            nside,
             interpolation_kind,
             has_polarization=False,
             pixel_indices=pixel_indices,
             mpi_comm=mpi_comm,
             verbose=verbose,
         )
+        self.dataurl = None  # utils.DATAURL
 
     def get_filenames(self, path):
         """Get filenames for a websky version
@@ -78,16 +80,14 @@ class WebSkyCIB(InterpolatingComponent):
             for freq in filenames:
                 filenames[freq] = os.path.join(self.local_folder, filenames[freq])
 
-
         return filenames
 
-    def read_map_by_freq(self, freq):
+    def read_map_by_frequency(self, freq):
         filename = utils.get_data_from_url(self.maps[freq])
         return self.read_map_file(freq, filename)
 
 
 class WebSkySZ(Model):
-
     def __init__(
         self,
         version="0.3",
@@ -124,11 +124,7 @@ class WebSkySZ(Model):
             nu = nu.reshape(1)
 
         filename = utils.get_data_from_url(self.get_filename())
-        m = self.read_map(
-            filename,
-            field=0,
-            unit=u.uK_CMB
-        )
+        m = self.read_map(filename, field=0, unit=u.uK_CMB)
 
         npix = (
             len(self.pixel_indices)
@@ -148,3 +144,31 @@ class WebSkySZ(Model):
 
         # the output of out is always 3D, (num_freqs, IQU, npix)
         return all_maps * u.uK_RJ
+
+
+class WebSkyCMB(PrecomputedAlms):
+    def __init__(
+        self,
+        websky_version,
+        nside,
+        precompute_output_map=False,
+        seed=1,
+        lensed=True,
+        pixel_indices=None,
+        mpi_comm=None,
+    ):
+        filename = utils.get_data_from_url(
+            "websky/{}/{}lensed_alm_seed{}.fits".format(
+                websky_version, "" if lensed else "un", seed
+            )
+        )
+        super().__init__(
+            filename,
+            input_units="uK_CMB",
+            input_reference_frequency=None,
+            nside=nside,
+            precompute_output_map=precompute_output_map,
+            has_polarization=True,
+            pixel_indices=pixel_indices,
+            mpi_comm=mpi_comm,
+        )
