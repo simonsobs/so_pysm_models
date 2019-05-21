@@ -217,4 +217,8 @@ Provided is a map of the temperature fluctuation due to line of sight peculiar v
 
 **Lensing Convergence** 
 
-A lensing convergence map is generated from the simulated matter distribution along the line of sight, assumed to follow an NFW profile interior to halos and second order LPT outside. This convergence map is used to lense a Gaussian realization of the unlensed primary CMB, which is then read into PySM as the primary lensed CMB through the `PrecomputedAlms class <https://so-pysm-models.readthedocs.io/en/latest/api/so_pysm_models.PrecomputedAlms.html#so_pysm_models.PrecomputedAlms>`_.
+A lensing convergence map is generated from the simulated matter distribution along the line of sight, assumed to follow an NFW profile interior to halos and second order LPT outside. 
+
+**Primary and lensed CMB**
+The convergence map is used to lens a Gaussian realization of the unlensed primary CMB, which is then read into PySM as the primary lensed CMB through the `PrecomputedAlms class <https://so-pysm-models.readthedocs.io/en/latest/api/so_pysm_models.PrecomputedAlms.html#so_pysm_models.PrecomputedAlms>`_.  
+The primary CMB is obtained from parameters that match the Websky simulation, namely A_s = 2.022e-9, tau = 0.055, and all other parameters set to the websky values above.  The CAR maps (where the lens remapping is done) have 1 arcminute resolution.  
