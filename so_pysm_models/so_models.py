@@ -71,7 +71,7 @@ def SO_d0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     ]
 
 def SO_d1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
-    T_map = get_data_from_url("dust_T_ns{}.fits".format(nside_template))
+    T_map = get_data_from_url("dust_T_ns{}_353GHz.fits".format(nside_template))
     Q_map = get_data_from_url("dust_Q_ns{}.fits".format(nside_template))
     U_map = get_data_from_url("dust_U_ns{}.fits".format(nside_template))
     beta_map = get_data_from_url("variable_spectral_index/beta_dust_ns{}_1deg.fits".format(nside_template))
@@ -82,7 +82,7 @@ def SO_d1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     return [
         {
             "model": "modified_black_body",
-            "nu_0_I": 545.,
+            "nu_0_I": 353.,
             "nu_0_P": 353.,
             "A_I": A_I,
             "A_Q": read_map(
@@ -126,7 +126,7 @@ def SO_s0(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     ]
 
 def SO_s1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
-    T_map = get_data_from_url("synch_T_ns{}.fits".format(nside_template))
+    T_map = get_data_from_url("synch_T_ns{}_23GHz.fits".format(nside_template))
     Q_map = get_data_from_url("synch_Q_ns{}.fits".format(nside_template))
     U_map = get_data_from_url("synch_U_ns{}.fits".format(nside_template))
     beta_map = get_data_from_url("variable_spectral_index/beta_synch_ns{}_1deg.fits".format(nside_template))
@@ -136,7 +136,7 @@ def SO_s1(nside, pixel_indices=None, mpi_comm=None, nside_template=512):
     return [
         {
             "model": "power_law",
-            "nu_0_I": 0.408,
+            "nu_0_I": 23.,
             "nu_0_P": 23.,
             "A_I": A_I,
             "A_Q": read_map(
