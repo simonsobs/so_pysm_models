@@ -7,7 +7,7 @@ from pysm import read_map
 import pysm.units as u
 from .utils import get_data_from_url
 
-def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
+def get_so_models(key, nside, map_dist=None):
     small_scale = key.endswith("s")
     if small_scale:
         nside_template = 4096
@@ -48,8 +48,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
             unit_Q=u.uK_RJ,
             unit_U=u.uK_RJ,
             unit_mbb_temperature=u.K,
-            pixel_indices=pixel_indices,
-            mpi_comm=mpi_comm,
+            map_dist=map_dist,
         )
     elif key.startswith("SO_s"):
         if key == "SO_s0":
@@ -75,8 +74,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
             unit_I=u.uK_RJ,
             unit_Q=u.uK_RJ,
             unit_U=u.uK_RJ,
-            pixel_indices=pixel_indices,
-            mpi_comm=mpi_comm,
+            map_dist=map_dist,
         )
     elif key == "SO_f0":
         model = pysm.PowerLaw(
@@ -85,8 +83,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
             map_pl_index=-2.14,
             nside=nside,
             unit_I=u.uK_RJ,
-            pixel_indices=pixel_indices,
-            mpi_comm=mpi_comm,
+            map_dist=map_dist,
         )
     elif key == "SO_a0":
         model = pysm.Sky(
@@ -99,8 +96,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
                     freq_ref_peak=30 * u.GHz,
                     nside=nside,
                     unit_I=u.uK_RJ,
-                    pixel_indices=pixel_indices,
-                    mpi_comm=mpi_comm,
+                    map_dist=map_dist,
                 ),
                 pysm.SpDust(
                     map_I=get_data_from_url("ame2_T_ns{}.fits".format(nside_template)),
@@ -110,8 +106,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
                     freq_ref_peak=30 * u.GHz,
                     nside=nside,
                     unit_I=u.uK_RJ,
-                    pixel_indices=pixel_indices,
-                    mpi_comm=mpi_comm,
+                    map_dist=map_dist,
                 ),
             ]
         )
@@ -137,8 +132,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
                     ),
                     nside=nside,
                     unit_I=u.uK_RJ,
-                    pixel_indices=pixel_indices,
-                    mpi_comm=mpi_comm,
+                    map_dist=map_dist,
                 ),
                 pysm.SpDustPol(
                     map_I=get_data_from_url("ame2_T_ns{}.fits".format(nside_template)),
@@ -155,8 +149,7 @@ def get_so_models(key, nside, pixel_indices=None, mpi_comm=None):
                     ),
                     nside=nside,
                     unit_I=u.uK_RJ,
-                    pixel_indices=pixel_indices,
-                    mpi_comm=mpi_comm,
+                    map_dist=map_dist,
                 ),
             ]
         )
