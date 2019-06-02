@@ -1,13 +1,18 @@
-from pysm import InterpolatingComponent, Model
-from pysm import units as u
-from .alms import PrecomputedAlms
-from . import utils
-import pysm
-import numpy as np
-import healpy as hp
 import os.path
 
+from numba import njit
+import numpy as np
 
+from pysm import InterpolatingComponent, Model
+from pysm import units as u
+
+from pysm.utils import normalize_weights, trapz_step_inplace
+from .alms import PrecomputedAlms
+from . import utils
+
+
+
+@njit
 def y2uK_CMB(nu):
     """Compton-y distortion at a given frequency
 
@@ -37,8 +42,7 @@ class WebSkyCIB(InterpolatingComponent):
         input_units="MJy / sr",
         nside=4096,
         interpolation_kind="linear",
-        pixel_indices=None,
-        mpi_comm=None,
+        map_dist=None,
         verbose=False,
         local_folder=None,
     ):
@@ -49,8 +53,7 @@ class WebSkyCIB(InterpolatingComponent):
             nside,
             interpolation_kind,
             has_polarization=False,
-            pixel_indices=pixel_indices,
-            mpi_comm=mpi_comm,
+            map_dist=map_dist,
             verbose=verbose,
         )
         self.dataurl = None  # utils.DATAURL
@@ -89,16 +92,10 @@ class WebSkyCIB(InterpolatingComponent):
 
 class WebSkySZ(Model):
     def __init__(
-        self,
-        version="0.3",
-        sz_type="kinetic",
-        nside=4096,
-        pixel_indices=None,
-        mpi_comm=None,
-        verbose=False,
+        self, version="0.3", sz_type="kinetic", nside=4096, map_dist=None, verbose=False
     ):
 
-        super().__init__(nside=nside, pixel_indices=pixel_indices, mpi_comm=mpi_comm)
+        super().__init__(nside=nside, map_dist=map_dist)
         self.version = str(version)
         self.sz_type = sz_type
         self.verbose = verbose
@@ -116,9 +113,10 @@ class WebSkySZ(Model):
         return filename
 
     @u.quantity_input
-    def get_emission(self, freqs: u.GHz) -> u.uK_RJ:
+    def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
 
         nu = freqs.to(u.GHz)
+        weights = normalize_weights(freqs, weights)
 
         if nu.isscalar:
             nu = nu.reshape(1)
@@ -126,24 +124,30 @@ class WebSkySZ(Model):
         filename = utils.get_data_from_url(self.get_filename())
         m = self.read_map(filename, field=0, unit=u.uK_CMB)
 
-        npix = (
-            len(self.pixel_indices)
-            if self.pixel_indices is not None
-            else hp.nside2npix(self.nside)
+        weights = (weights * u.uK_CMB).to_value(
+            u.uK_RJ, equivalencies=u.cmb_equivalencies(nu)
         )
 
-        all_maps = np.zeros((len(nu), 1, npix), dtype=np.double)
-
-        szfac = np.ones(len(nu)) * u.uK_CMB
-        if self.sz_type == "thermal":
-            szfac *= y2uK_CMB(nu.value)
-
-        all_maps[:, 0, :] = np.outer(
-            szfac.to(u.uK_RJ, equivalencies=u.cmb_equivalencies(nu)), m
+        is_thermal = self.sz_type == "thermal"
+        output = (
+            get_sz_emission_numba(nu.value, weights, m.value, is_thermal)
+            << u.uK_RJ
         )
 
-        # the output of out is always 3D, (num_freqs, IQU, npix)
-        return all_maps * u.uK_RJ
+        # the output of out is always 2D, (IQU, npix)
+        return output
+
+
+@njit(parallel=True)
+def get_sz_emission_numba(freqs, weights, m, is_thermal):
+    output = np.zeros((3, len(m)), dtype=m.dtype)
+    for i in range(len(freqs)):
+        if is_thermal:
+            signal = m * m.dtype.type(y2uK_CMB(freqs[i]))
+        else:
+            signal = m
+        trapz_step_inplace(freqs, weights, i, signal, output[0])
+    return output
 
 
 class WebSkyCMB(PrecomputedAlms):
@@ -154,8 +158,7 @@ class WebSkyCMB(PrecomputedAlms):
         precompute_output_map=False,
         seed=1,
         lensed=True,
-        pixel_indices=None,
-        mpi_comm=None,
+        map_dist=None,
     ):
         filename = utils.get_data_from_url(
             "websky/{}/{}lensed_alm_seed{}.fits".format(
@@ -169,6 +172,5 @@ class WebSkyCMB(PrecomputedAlms):
             nside=nside,
             precompute_output_map=precompute_output_map,
             has_polarization=True,
-            pixel_indices=pixel_indices,
-            mpi_comm=mpi_comm,
+            map_dist=map_dist,
         )
