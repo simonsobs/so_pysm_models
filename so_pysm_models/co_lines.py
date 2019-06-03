@@ -2,14 +2,13 @@ import numpy as np
 
 import healpy as hp
 
-from pysm import read_map
-def convert_units(*args):
-    pass
+import pysm.units as u
+import pysm
 
 from .utils import get_data_from_url
 
 
-class COLines:
+class COLines(pysm.Model):
     def __init__(
         self,
         target_nside,
@@ -22,8 +21,7 @@ class COLines:
         random_seed=1234567,
         verbose=False,
         run_mcmole3d=False,
-        pixel_indices=None,
-        mpi_comm=None,
+        map_dist=None,
     ):
 
         """Class defining attributes for CO line emission.
@@ -55,27 +53,25 @@ class COLines:
         theta_high_galactic_latitude_deg : float
             Angle in degree  to identify High Galactic Latitude clouds
             (i.e. clouds whose latitude b is `|b|> theta_high_galactic_latitude_deg`).
-        pixel_indices : ndarray of ints
-            Outputs partial maps given HEALPix pixel indices in RING ordering
-        mpi_comm : mpi4py communicator
+        map_dist : mpi4py communicator
             Read inputs across a MPI communicator, see pysm.read_map
         """
 
         self.line = line
         self.line_index = {"10": 0, "21": 1, "32": 2}[line]
-        self.line_frequency = {"10": 115.271, "21": 230.538, "32": 345.796}[line]
+        self.line_frequency = {"10": 115.271*u.GHz, "21": 230.538*u.GHz, "32": 345.796*u.GHz}[line]
         self.target_nside = target_nside
 
         self.template_nside = 512 if self.target_nside <= 512 else 2048
 
-        self.pixel_indices = pixel_indices
-        self.mpi_comm = mpi_comm
+        super().__init__(nside=target_nside, map_dist=map_dist)
 
         self.planck_templatemap_filename = "co/HFI_CompMap_CO-Type1_{}_R2.00_ring.fits".format(
             self.template_nside
         )
         self.planck_templatemap = self.read_map(
-            self.planck_templatemap_filename, field=self.line_index
+            get_data_from_url(self.planck_templatemap_filename), field=self.line_index,
+            unit=u.K_CMB,
         )
 
         self.include_high_galactic_latitude_clouds = (
@@ -87,24 +83,14 @@ class COLines:
         self.random_seed = random_seed
         self.run_mcmole3d = run_mcmole3d
 
-        self.output_units = output_units
+        self.output_units = u.Unit(output_units)
         self.verbose = verbose
-
-    def read_map(self, fname, field=None):
-        return read_map(
-            get_data_from_url(fname),
-            nside=self.target_nside,
-            field=field,
-            pixel_indices=self.pixel_indices,
-            mpi_comm=self.mpi_comm,
-            verbose=False,
-        )
 
     def signal(self):
         """
         Simulate CO signal
         """
-        out = hp.ud_grade(map_in=self.planck_templatemap, nside_out=self.target_nside)
+        out = hp.ud_grade(map_in=self.planck_templatemap, nside_out=self.target_nside) << u.K_CMB
 
         if self.include_high_galactic_latitude_clouds:
             out += self.simulate_high_galactic_latitude_CO()
@@ -113,9 +99,11 @@ class COLines:
             Q_map, U_map = self.simulate_polarized_emission(out)
             out = np.array([out, Q_map, U_map])
 
-        unit_conversion = convert_units("K_CMB", self.output_units, self.line_frequency)
+        convert_to_uK_RJ = (1 * u.K_CMB).to_value(
+            self.output_units, equivalencies=u.cmb_equivalencies(self.line_frequency)
+        )
 
-        return out * unit_conversion
+        return out * convert_to_uK_RJ
 
     def simulate_polarized_emission(self, I_map):
         """
@@ -125,8 +113,8 @@ class COLines:
         * a polarization angle map coming from a dust template (we exploit the observed correlation
         between polarized dust and molecular emission in star forming regions).
         """
-        polangle = self.read_map("co/psimap_dust90_{}.fits".format(self.template_nside))
-        depolmap = self.read_map("co/gmap_dust90_{}.fits".format(self.template_nside))
+        polangle = self.read_map(get_data_from_url("co/psimap_dust90_{}.fits".format(self.template_nside))).value
+        depolmap = self.read_map(get_data_from_url("co/gmap_dust90_{}.fits".format(self.template_nside))).value
 
         if hp.get_nside(depolmap) != self.target_nside:
             polangle = hp.ud_grade(map_in=polangle, nside_out=self.target_nside)
@@ -210,8 +198,8 @@ class COLines:
             return mapclouds * hglmask / belowplanck
         else:
             mapclouds = self.read_map(
-                "co/mcmoleCO_HGL_{}.fits".format(self.template_nside),
-                field=self.line_index,
+                get_data_from_url("co/mcmoleCO_HGL_{}.fits".format(self.template_nside)),
+                field=self.line_index, unit=u.K_CMB,
             )
 
             return mapclouds

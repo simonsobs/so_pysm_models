@@ -93,7 +93,9 @@ class PrecomputedAlms(pysm.Model):
         )
 
     @u.quantity_input
-    def get_emission(self, freqs: u.GHz, fwhm: [u.arcmin, None] = None) -> u.uK_RJ:
+    def get_emission(
+        self, freqs: u.GHz, fwhm: [u.arcmin, None] = None, weights=None
+    ) -> u.uK_RJ:
         """Return map in uK_RJ at given frequency or array of frequencies
 
         Parameters
@@ -131,9 +133,13 @@ class PrecomputedAlms(pysm.Model):
 
             output_map = self.compute_output_map(alm)
 
-        output_map = np.tile(output_map, (len(freqs), 1, 1)).value
         convert_to_uK_RJ = (np.ones(len(freqs), dtype=np.double) * u.uK_CMB).to(
             u.uK_RJ, equivalencies=u.cmb_equivalencies(freqs)
         )
 
-        return output_map * convert_to_uK_RJ.reshape((len(freqs), 1, 1))
+        if nfreqs == 1:
+            scaling_factor = convert_to_uK_RJ[0]
+        else:
+            scaling_factor = np.trapz(convert_to_uK_RJ * weights, x=freqs.value)
+
+        return output_map * scaling_factor
