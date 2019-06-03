@@ -125,7 +125,7 @@ class PrecomputedAlms(pysm.Model):
                 alm = self.alm
             else:
                 alm = hp.smoothalm(
-                    self.alm, fwhm=fwhm.to_value(u.radians), pol=True, inplace=False
+                    self.alm, fwhm=fwhm.to_value(u.radian), pol=True, inplace=False
                 )
 
             output_map = self.compute_output_map(alm)
