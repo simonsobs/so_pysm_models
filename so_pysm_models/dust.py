@@ -7,11 +7,14 @@ import math
 from . import laws
 from . import filter_utils
 
+import pysm
+from pysm import check_freq_input
+import pysm.units as u
 
-class GaussianDust:
+class GaussianDust(pysm.Model):
     def __init__(
         self,
-        target_nside,
+        nside,
         has_polarization=True,
         pixel_indices=None,
         TT_amplitude=350.0,
@@ -24,6 +27,7 @@ class GaussianDust:
         temp=19.6,
         nu_0=353,
         seed=None,
+        map_dist=None
     ):
         """Gaussian dust model
 
@@ -31,7 +35,7 @@ class GaussianDust:
 
         Parameters
         ----------
-        target_nside : int
+        nside : int
             HEALPix NSIDE of the output maps
         has_polarization : bool
             whether or not to simulate also polarization maps
@@ -70,8 +74,7 @@ class GaussianDust:
             Default: None
         """
 
-        self.target_nside = target_nside
-        self.pixel_indices = pixel_indices
+        super().__init__(nside=nside, map_dist=map_dist)
         self.has_polarization = has_polarization
         self.TT_amplitude = TT_amplitude
         self.Toffset = Toffset
@@ -83,15 +86,14 @@ class GaussianDust:
         self.nu_0 = nu_0
         self.seed = seed
 
-    def signal(self, nu, **kwargs):
+    @u.quantity_input
+    def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
         """Return map in uK_RJ at given frequency or array of frequencies"""
 
-        nell = 3 * self.target_nside
-        try:
-            nnu = len(nu)
-        except TypeError:
-            nnu = 1
-            nu = np.array([nu])
+        nu = check_freq_input(freqs).value
+        assert len(nu) == 1, "Bandpass integration not implemented in Gaussian emissions"
+
+        nell = 3 * self.nside
         ell = np.arange(nell)
         dl_prefac = 2 * np.pi / ((ell + 0.01) * (ell + 1))
         clZERO = np.zeros_like(ell)
@@ -120,8 +122,8 @@ class GaussianDust:
         else:
             mseed = self.seed
         np.random.seed(mseed)
-        if self.target_nside <= 64:
-            nside_temp = self.target_nside
+        if self.nside <= 64:
+            nside_temp = self.nside
         else:
             nside_temp = 64
         amp_dust = np.array(
@@ -149,7 +151,7 @@ class GaussianDust:
             )
             amp_dust[0] = amp_dust[0] + self.Toffset
             lbreak_TT += 1
-        if self.target_nside > 64:
+        if self.nside > 64:
             low_pass_filter = filter_utils.create_low_pass_filter(l1=30, l2=60, lmax=64 * 3 - 1)
             high_pass_filter = filter_utils.create_high_pass_filter(l1=30, l2=60, lmax=nell - 1)
             clTT_dust_hpf = clTT_dust * high_pass_filter
@@ -158,13 +160,13 @@ class GaussianDust:
             amp_dust_hell = np.array(
                 hp.synfast(
                     [clTT_dust_hpf, clEE_dust, clBB_dust, clZERO, clZERO, clZERO],
-                    self.target_nside,
+                    self.nside,
                     pol=True,
                     new=True,
                     verbose=False,
                 )
             )
-            amp_dust = hp.ud_grade(amp_dust, self.target_nside)
+            amp_dust = hp.ud_grade(amp_dust, self.nside)
             amp_dust[1:3] = amp_dust[1:3] * 0.0
             amp_dust += amp_dust_hell
         min_map = np.min(amp_dust[0])
@@ -175,7 +177,4 @@ class GaussianDust:
         out = amp_dust[None, :, :] * spec_dust[:, None, None]
         # the output of out is always 3D, (num_freqs, IQU, npix), if num_freqs is one
         # we return only a 2D array.
-        if len(out) == 1:
-            return out[0]
-        else:
-            return out
+        return out[0] << u.uK_RJ
