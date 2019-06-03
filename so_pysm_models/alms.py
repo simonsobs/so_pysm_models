@@ -21,8 +21,7 @@ class PrecomputedAlms(pysm.Model):
         target_wcs=None,
         precompute_output_map=True,
         has_polarization=True,
-        pixel_indices=None,
-        mpi_comm=None,
+        map_dist=None,
     ):
         """Generic component based on Precomputed Alms
 
@@ -51,11 +50,9 @@ class PrecomputedAlms(pysm.Model):
         has_polarization : bool
             whether or not to simulate also polarization maps
             Default: True
-        pixel_indices : ndarray of ints
-            Output a partial maps given HEALPix pixel indices in RING ordering
         """
 
-        super().__init__(nside=nside, pixel_indices=pixel_indices, mpi_comm=mpi_comm)
+        super().__init__(nside=nside, map_dist=map_dist)
         self.shape = target_shape
         self.wcs = target_wcs
         self.filename = filename
@@ -133,7 +130,7 @@ class PrecomputedAlms(pysm.Model):
 
             output_map = self.compute_output_map(alm)
 
-        convert_to_uK_RJ = (np.ones(len(freqs), dtype=np.double) * u.uK_CMB).to(
+        convert_to_uK_RJ = (np.ones(len(freqs), dtype=np.double) * u.uK_CMB).to_value(
             u.uK_RJ, equivalencies=u.cmb_equivalencies(freqs)
         )
 
@@ -142,4 +139,4 @@ class PrecomputedAlms(pysm.Model):
         else:
             scaling_factor = np.trapz(convert_to_uK_RJ * weights, x=freqs.value)
 
-        return output_map * scaling_factor
+        return output_map.value * scaling_factor << u.uK_RJ

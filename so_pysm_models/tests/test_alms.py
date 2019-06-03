@@ -51,17 +51,14 @@ def test_precomputed_alms(setup):
     m = precomputed_alms.get_emission(23 * u.GHz)
 
     assert_quantity_allclose(
-        m[0], test_map_K_CMB.to(u.K_RJ, equivalencies=u.cmb_equivalencies(23 * u.GHz))
+        m, test_map_K_CMB.to(u.K_RJ, equivalencies=u.cmb_equivalencies(23 * u.GHz))
     )
 
     freqs = np.array([1, 10, 100]) * u.GHz
-    m_multifreq = precomputed_alms.get_emission(freqs)
 
-    assert m_multifreq.shape == (3, 3, hp.nside2npix(64))
-
-    for freq, m in zip(freqs, m_multifreq):
+    for freq in freqs:
         np.testing.assert_allclose(
-            m, test_map_K_CMB.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq))
+            precomputed_alms.get_emission(freq), test_map_K_CMB.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq))
         )
 
 
@@ -76,11 +73,8 @@ def test_precomputed_alms_K_CMB(setup):
     )
 
     freqs = np.array([1, 10, 100]) * u.GHz
-    m_multifreq = precomputed_alms.get_emission(freqs)
 
-    assert m_multifreq.shape == (3, 3, hp.nside2npix(64))
-
-    for freq, m in zip(freqs, m_multifreq):
+    for freq in freqs:
         np.testing.assert_allclose(
-            m, test_map.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq))
+            precomputed_alms.get_emission(freq), test_map.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq))
         )
