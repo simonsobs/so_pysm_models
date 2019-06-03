@@ -19,7 +19,7 @@ def get_so_models(key, nside, map_dist=None):
         if key == "SO_d0":
             map_mbb_index = 1.53
             map_mbb_temperature = 19.6 * u.K
-            dust_T = get_data_from_url("dust_T_ns{}.fits".format(nside_template)),
+            dust_T = get_data_from_url("dust_T_ns{}.fits".format(nside_template))
             freq_ref_I = 545 * u.GHz
         elif key == "SO_d1":
             map_mbb_index = get_data_from_url(
