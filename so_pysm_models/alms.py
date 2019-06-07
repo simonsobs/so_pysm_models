@@ -1,11 +1,6 @@
 import numpy as np
 import healpy as hp
 
-try:
-    from pixell import curvedsky, enmap
-except:
-    pass
-
 import pysm
 from pysm import units as u
 
@@ -17,8 +12,6 @@ class PrecomputedAlms(pysm.Model):
         input_units="uK_CMB",
         input_reference_frequency=None,
         nside=None,
-        target_shape=None,
-        target_wcs=None,
         precompute_output_map=True,
         has_polarization=True,
         map_dist=None,
@@ -53,8 +46,6 @@ class PrecomputedAlms(pysm.Model):
         """
 
         super().__init__(nside=nside, map_dist=map_dist)
-        self.shape = target_shape
-        self.wcs = target_wcs
         self.filename = filename
         self.input_units = u.Unit(input_units)
         self.has_polarization = has_polarization
@@ -76,15 +67,8 @@ class PrecomputedAlms(pysm.Model):
 
     def compute_output_map(self, alm):
 
-        if self.nside is None:
-            assert (self.shape is not None) and (self.wcs is not None)
-            n_comp = 3 if self.has_polarization else 1
-            output_map = enmap.empty((n_comp,) + self.shape[-2:], self.wcs)
-            curvedsky.alm2map(alm, output_map, spin=[0, 2], verbose=True)
-        elif self.nside is not None:
+        if self.nside is not None:
             output_map = hp.alm2map(alm, self.nside)
-        else:
-            raise ValueError("You must specify either nside or both of shape and wcs")
         return (output_map << self.input_units).to(
             u.uK_CMB, equivalencies=self.equivalencies
         )
