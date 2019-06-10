@@ -3,7 +3,7 @@ import os.path
 from numba import njit
 import numpy as np
 
-from pysm import InterpolatingComponent, Model
+from pysm import InterpolatingComponent, Model, CMBMap
 from pysm import units as u
 
 from pysm.utils import normalize_weights, trapz_step_inplace
@@ -172,5 +172,28 @@ class WebSkyCMB(PrecomputedAlms):
             nside=nside,
             precompute_output_map=precompute_output_map,
             has_polarization=True,
+            map_dist=map_dist,
+        )
+
+class WebSkyCMBMap(CMBMap):
+    def __init__(
+        self,
+        websky_version,
+        nside,
+        precompute_output_map=False,
+        seed=1,
+        lensed=True,
+        map_dist=None,
+    ):
+        template_nside = 512 if nside <= 512 else 4096
+        lens = "" if lensed else "un"
+        filenames = [utils.get_data_from_url(
+            f"websky/{websky_version}/map_{pol}_{lens}lensed_alm_seed{seed}_nside{template_nside}.fits"
+        ) for pol in "IQU"]
+        super().__init__(
+            map_I=filenames[0],
+            map_Q=filenames[1],
+            map_U=filenames[2],
+            nside=nside,
             map_dist=map_dist,
         )
