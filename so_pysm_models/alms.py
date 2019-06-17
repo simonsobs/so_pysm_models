@@ -50,9 +50,7 @@ class PrecomputedAlms(pysm.Model):
         self.input_units = u.Unit(input_units)
         self.has_polarization = has_polarization
 
-        alm = np.complex128(
-            hp.read_alm(self.filename, hdu=(1, 2, 3) if self.has_polarization else 1)
-        )
+        alm = self.read_alm(self.filename, has_polarization=self.has_polarization)
 
         self.equivalencies = (
             None
@@ -67,8 +65,26 @@ class PrecomputedAlms(pysm.Model):
 
     def compute_output_map(self, alm):
 
-        if self.nside is not None:
+        if pysm.mpi.libsharp is None:
             output_map = hp.alm2map(alm, self.nside)
+        else:
+            output_map = pysm.mpi.libsharp.synthesis(
+                self.map_dist.libsharp_grid,
+                self.map_dist.libsharp_order,
+                alm[:, :1, :] if self.has_polarization else alm,
+                spin=0,
+                comm=self.map_dist.mpi_comm,
+            )[0]
+            if self.has_polarization:
+                signal_map_P = pysm.mpi.libsharp.synthesis(
+                    self.map_dist.libsharp_grid,
+                    self.map_dist.libsharp_order,
+                    alm[:, 1:, :],
+                    spin=2,
+                    comm=self.map_dist.mpi_comm,
+                )[0]
+                output_map = np.vstack((output_map, signal_map_P))
+
         return (output_map << self.input_units).to(
             u.uK_CMB, equivalencies=self.equivalencies
         )
