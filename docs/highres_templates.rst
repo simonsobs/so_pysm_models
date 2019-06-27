@@ -1,6 +1,8 @@
 High resolution templates
 *************************
 
+Starting from version 2.0, all input templates have been rotated to Equatorial, therefore by default the output is in Equatorial coordinates.
+
 :py:mod:`so_pysm_models` also provides access to templates with higher resolution and with updated
 data compared to the models included in PySM.
 
