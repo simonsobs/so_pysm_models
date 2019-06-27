@@ -9,8 +9,8 @@ import warnings
 
 DATAURL = "http://portal.nersc.gov/project/cmb/so_pysm_models_data/"
 PREDEFINED_DATA_FOLDERS = [
-    "/global/project/projectdirs/cmb/www/so_pysm_models_data",  # NERSC
-    "/simons/scratch/zonca/simonsobs/so_pysm_models_data",  # SDSC
+    "/global/project/projectdirs/cmb/www/so_pysm_models_data/equatorial",  # NERSC
+    "/simons/scratch/zonca/simonsobs/so_pysm_models_data/equatorial",  # SDSC
 ]
 
 

@@ -33,5 +33,5 @@ from .synchrotron import GaussianSynchrotron
 from .dust import GaussianDust
 from .alms import PrecomputedAlms
 from .co_lines import COLines
-from .extragalactic import WebSkySZ, WebSkyCIB, WebSkyCMB
+from .extragalactic import WebSkySZ, WebSkyCIB, WebSkyCMB, WebSkyCMBMap
 from .so_models import get_so_models
