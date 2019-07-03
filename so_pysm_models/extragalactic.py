@@ -182,12 +182,14 @@ class WebSkyCMBMap(CMBMap):
         precompute_output_map=False,
         seed=1,
         lensed=True,
+        include_solar_dipole=False,
         map_dist=None,
     ):
         template_nside = 512 if nside <= 512 else 4096
         lens = "" if lensed else "un"
+        soldip = "solardipole_" if include_solar_dipole else ""
         filenames = [utils.get_data_from_url(
-            f"websky/{websky_version}/map_{pol}_{lens}lensed_alm_seed{seed}_nside{template_nside}.fits"
+            f"websky/{websky_version}/map_{pol}_{lens}lensed_alm_seed{seed}_{soldip}nside{template_nside}.fits"
         ) for pol in "IQU"]
         super().__init__(
             map_I=filenames[0],
