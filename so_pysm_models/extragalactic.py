@@ -6,7 +6,7 @@ import numpy as np
 from pysm import InterpolatingComponent, Model, CMBMap
 from pysm import units as u
 
-from pysm.utils import normalize_weights, trapz_step_inplace
+from pysm.utils import normalize_weights, trapz_step_inplace, check_freq_input
 from .alms import PrecomputedAlms
 from . import utils
 
@@ -99,6 +99,8 @@ class WebSkySZ(Model):
         self.version = str(version)
         self.sz_type = sz_type
         self.verbose = verbose
+        filename = utils.get_data_from_url(self.get_filename())
+        self.m = self.read_map(filename, field=0, unit=u.uK_CMB)
 
     def get_filename(self):
         """Get SZ filenames for a websky version"""
@@ -115,22 +117,19 @@ class WebSkySZ(Model):
     @u.quantity_input
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
 
-        nu = freqs.to(u.GHz)
+        nu = check_freq_input(freqs)
         weights = normalize_weights(freqs, weights)
 
-        if nu.isscalar:
-            nu = nu.reshape(1)
-
-        filename = utils.get_data_from_url(self.get_filename())
-        m = self.read_map(filename, field=0, unit=u.uK_CMB)
-
+        # input map is in uK_CMB, we multiply the weights which are
+        # in uK_RJ by the conversion factor of uK_CMB->uK_RJ
+        # this is the equivalent of
         weights = (weights * u.uK_CMB).to_value(
             u.uK_RJ, equivalencies=u.cmb_equivalencies(nu)
         )
 
         is_thermal = self.sz_type == "thermal"
         output = (
-            get_sz_emission_numba(nu.value, weights, m.value, is_thermal)
+            get_sz_emission_numba(nu.value, weights, self.m.value, is_thermal)
             << u.uK_RJ
         )
 
