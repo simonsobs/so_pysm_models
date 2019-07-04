@@ -96,11 +96,8 @@ class PrecomputedAlms(pysm.Model):
             Output maps array with the shape (num_freqs, 1 or 3 (I or IQU), npix)
         """
 
-        try:
-            nfreqs = len(freqs)
-        except TypeError:
-            nfreqs = 1
-            freqs = freqs.reshape((1,))
+        freqs = pysm.utils.check_freq_input(freqs)
+        weights = pysm.utils.normalize_weights(freqs, weights)
 
         try:
             output_map = self.output_map
