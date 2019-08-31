@@ -11,7 +11,6 @@ from .alms import PrecomputedAlms
 from . import utils
 
 
-
 @njit
 def y2uK_CMB(nu):
     """Compton-y distortion at a given frequency
@@ -45,6 +44,7 @@ class WebSkyCIB(InterpolatingComponent):
         map_dist=None,
         verbose=False,
         local_folder=None,
+        coord="C",
     ):
         self.local_folder = local_folder
         super().__init__(
@@ -56,7 +56,7 @@ class WebSkyCIB(InterpolatingComponent):
             map_dist=map_dist,
             verbose=verbose,
         )
-        self.dataurl = None  # utils.DATAURL
+        self.remote_data = utils.RemoteData(coord)
 
     def get_filenames(self, path):
         """Get filenames for a websky version
@@ -86,20 +86,27 @@ class WebSkyCIB(InterpolatingComponent):
         return filenames
 
     def read_map_by_frequency(self, freq):
-        filename = utils.get_data_from_url(self.maps[freq])
+        filename = self.remote_data.get(self.maps[freq])
         return self.read_map_file(freq, filename)
 
 
 class WebSkySZ(Model):
     def __init__(
-        self, version="0.3", sz_type="kinetic", nside=4096, map_dist=None, verbose=False
+        self,
+        version="0.3",
+        sz_type="kinetic",
+        nside=4096,
+        map_dist=None,
+        verbose=False,
+        coord="C",
     ):
 
         super().__init__(nside=nside, map_dist=map_dist)
         self.version = str(version)
         self.sz_type = sz_type
         self.verbose = verbose
-        filename = utils.get_data_from_url(self.get_filename())
+        self.remote_data = utils.RemoteData(coord)
+        filename = self.remote_data.get(self.get_filename())
         self.m = self.read_map(filename, field=0, unit=u.uK_CMB)
 
     def get_filename(self):
@@ -158,8 +165,9 @@ class WebSkyCMB(PrecomputedAlms):
         seed=1,
         lensed=True,
         map_dist=None,
+        coord="C",
     ):
-        filename = utils.get_data_from_url(
+        filename = utils.RemoteData(coord).get(
             "websky/{}/{}lensed_alm_seed{}.fits".format(
                 websky_version, "" if lensed else "un", seed
             )
@@ -174,6 +182,7 @@ class WebSkyCMB(PrecomputedAlms):
             map_dist=map_dist,
         )
 
+
 class WebSkyCMBMap(CMBMap):
     def __init__(
         self,
@@ -184,13 +193,17 @@ class WebSkyCMBMap(CMBMap):
         lensed=True,
         include_solar_dipole=False,
         map_dist=None,
+        coord="C",
     ):
         template_nside = 512 if nside <= 512 else 4096
         lens = "" if lensed else "un"
         soldip = "solardipole_" if include_solar_dipole else ""
-        filenames = [utils.get_data_from_url(
-            f"websky/{websky_version}/map_{pol}_{lens}lensed_alm_seed{seed}_{soldip}nside{template_nside}.fits"
-        ) for pol in "IQU"]
+        filenames = [
+            utils.RemoteData(coord).get(
+                f"websky/{websky_version}/map_{pol}_{lens}lensed_alm_seed{seed}_{soldip}nside{template_nside}.fits"
+            )
+            for pol in "IQU"
+        ]
         super().__init__(
             map_I=filenames[0],
             map_Q=filenames[1],

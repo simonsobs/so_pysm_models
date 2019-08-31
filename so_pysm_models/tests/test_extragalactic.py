@@ -29,7 +29,7 @@ def test_cib(tmp_path):
 
 def test_ksz(tmp_path, monkeypatch):
 
-    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", [str(tmp_path)])
+    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C":[str(tmp_path)]})
     nside = 4
     shape = hp.nside2npix(nside)
 
@@ -49,7 +49,7 @@ def test_ksz(tmp_path, monkeypatch):
 
 def test_tsz(tmp_path, monkeypatch):
 
-    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", [str(tmp_path)])
+    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C":[str(tmp_path)]})
     nside = 4
     shape = hp.nside2npix(nside)
 
