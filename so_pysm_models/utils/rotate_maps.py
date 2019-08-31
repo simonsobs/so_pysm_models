@@ -2,17 +2,19 @@ import healpy as hp
 import sys
 from pathlib import Path
 
-folder = Path(sys.argv[1])
+if __name__ == "__main__":
 
-out_folder = folder / "equatorial"
+    folder = Path(sys.argv[1])
 
-rot = hp.Rotator(coord=["G","C"])
+    out_folder = folder / "equatorial"
 
-for f in folder.glob("*.fits"):
-    print(f)
-    f = str(f)
-    m = hp.read_map(f)
-    m_equatorial = rot.rotate_map_alms(m)
-    out_file = f.replace(str(folder), str(out_folder))
-    print(out_file)
-    hp.write_map(out_file, m_equatorial)
+    rot = hp.Rotator(coord=["G","C"])
+
+    for f in folder.glob("*.fits"):
+        print(f)
+        f = str(f)
+        m = hp.read_map(f)
+        m_equatorial = rot.rotate_map_alms(m)
+        out_file = f.replace(str(folder), str(out_folder))
+        print(out_file)
+        hp.write_map(out_file, m_equatorial)
