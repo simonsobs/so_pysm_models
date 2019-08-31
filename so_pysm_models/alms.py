@@ -115,7 +115,7 @@ class PrecomputedAlms(pysm.Model):
             u.uK_RJ, equivalencies=u.cmb_equivalencies(freqs)
         )
 
-        if nfreqs == 1:
+        if len(freqs) == 1:
             scaling_factor = convert_to_uK_RJ[0]
         else:
             scaling_factor = np.trapz(convert_to_uK_RJ * weights, x=freqs.value)
