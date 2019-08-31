@@ -5,7 +5,7 @@ import healpy as hp
 import pysm.units as u
 import pysm
 
-from .utils import get_data_from_url
+from .utils import RemoteData
 
 
 class COLines(pysm.Model):
@@ -17,11 +17,12 @@ class COLines(pysm.Model):
         line="10",
         include_high_galactic_latitude_clouds=False,
         polarization_fraction=0.001,
-        theta_high_galactic_latitude_deg=20.,
+        theta_high_galactic_latitude_deg=20.0,
         random_seed=1234567,
         verbose=False,
         run_mcmole3d=False,
         map_dist=None,
+        coord="C",
     ):
 
         """Class defining attributes for CO line emission.
@@ -59,18 +60,25 @@ class COLines(pysm.Model):
 
         self.line = line
         self.line_index = {"10": 0, "21": 1, "32": 2}[line]
-        self.line_frequency = {"10": 115.271*u.GHz, "21": 230.538*u.GHz, "32": 345.796*u.GHz}[line]
+        self.line_frequency = {
+            "10": 115.271 * u.GHz,
+            "21": 230.538 * u.GHz,
+            "32": 345.796 * u.GHz,
+        }[line]
         self.target_nside = target_nside
 
         self.template_nside = 512 if self.target_nside <= 512 else 2048
 
         super().__init__(nside=target_nside, map_dist=map_dist)
 
+        self.remote_data = RemoteData(coord)
+
         self.planck_templatemap_filename = "co/HFI_CompMap_CO-Type1_{}_R2.00_ring.fits".format(
             self.template_nside
         )
         self.planck_templatemap = self.read_map(
-            get_data_from_url(self.planck_templatemap_filename), field=self.line_index,
+            self.remote_data.get(self.planck_templatemap_filename),
+            field=self.line_index,
             unit=u.K_CMB,
         )
 
@@ -90,7 +98,10 @@ class COLines(pysm.Model):
         """
         Simulate CO signal
         """
-        out = hp.ud_grade(map_in=self.planck_templatemap, nside_out=self.target_nside) << u.K_CMB
+        out = (
+            hp.ud_grade(map_in=self.planck_templatemap, nside_out=self.target_nside)
+            << u.K_CMB
+        )
 
         if self.include_high_galactic_latitude_clouds:
             out += self.simulate_high_galactic_latitude_CO()
@@ -113,15 +124,19 @@ class COLines(pysm.Model):
         * a polarization angle map coming from a dust template (we exploit the observed correlation
         between polarized dust and molecular emission in star forming regions).
         """
-        polangle = self.read_map(get_data_from_url("co/psimap_dust90_{}.fits".format(self.template_nside))).value
-        depolmap = self.read_map(get_data_from_url("co/gmap_dust90_{}.fits".format(self.template_nside))).value
+        polangle = self.read_map(
+            self.remote_data.get("co/psimap_dust90_{}.fits".format(self.template_nside))
+        ).value
+        depolmap = self.read_map(
+            self.remote_data.get("co/gmap_dust90_{}.fits".format(self.template_nside))
+        ).value
 
         if hp.get_nside(depolmap) != self.target_nside:
             polangle = hp.ud_grade(map_in=polangle, nside_out=self.target_nside)
             depolmap = hp.ud_grade(map_in=depolmap, nside_out=self.target_nside)
 
-        cospolangle = np.cos(2. * polangle)
-        sinpolangle = np.sin(2. * polangle)
+        cospolangle = np.cos(2.0 * polangle)
+        sinpolangle = np.sin(2.0 * polangle)
 
         P_map = self.polarization_fraction * depolmap * I_map
         Q_map = P_map * cospolangle
@@ -138,14 +153,14 @@ class COLines(pysm.Model):
             # params to MCMole
             N = 40000
             L_0 = 20.4  # pc
-            L_min = .3
-            L_max = 60.
+            L_min = 0.3
+            L_max = 60.0
             R_ring = 5.8
             sigma_ring = 2.7  # kpc
-            R_bulge = 3.
+            R_bulge = 3.0
             R_z = 10  # kpc
             z_0 = 0.1
-            Em_0 = 240.
+            Em_0 = 240.0
             R_em = 6.6
             model = "LogSpiral"
 
@@ -172,7 +187,7 @@ class COLines(pysm.Model):
             mapclouds = cl.do_healpy_map(
                 Pop,
                 nside,
-                highgalcut=np.deg2rad(90. - self.theta_high_galactic_latitude_deg),
+                highgalcut=np.deg2rad(90.0 - self.theta_high_galactic_latitude_deg),
                 apodization="gaussian",
                 verbose=self.verbose,
             )
@@ -184,22 +199,25 @@ class COLines(pysm.Model):
             # Apply mask to low galactic latitudes
             listhgl = hp.query_strip(
                 nside,
-                np.deg2rad(90. + self.theta_high_galactic_latitude_deg),
+                np.deg2rad(90.0 + self.theta_high_galactic_latitude_deg),
                 np.deg2rad(90 - self.theta_high_galactic_latitude_deg),
             )
-            hglmask[listhgl] = 1.
+            hglmask[listhgl] = 1.0
             rmsplanck = self.planck_templatemap[listhgl].std()
             rmssim = mapclouds[listhgl].std()
-            if rmssim == 0.:
-                belowplanck = 1.
+            if rmssim == 0.0:
+                belowplanck = 1.0
             else:
                 belowplanck = rmssim / rmsplanck
 
             return mapclouds * hglmask / belowplanck
         else:
             mapclouds = self.read_map(
-                get_data_from_url("co/mcmoleCO_HGL_{}.fits".format(self.template_nside)),
-                field=self.line_index, unit=u.K_CMB,
+                self.remote_data.get(
+                    "co/mcmoleCO_HGL_{}.fits".format(self.template_nside)
+                ),
+                field=self.line_index,
+                unit=u.K_CMB,
             )
 
             return mapclouds
