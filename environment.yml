@@ -5,6 +5,7 @@ channels:
     - conda-forge
 
 dependencies:
+    - mpi4py
     - python>=3.6
     - astropy
     - numba
