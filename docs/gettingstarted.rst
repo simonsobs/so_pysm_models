@@ -6,10 +6,10 @@ Installation
 
 Requirements:
 
-* PySM `PySM <https://github.com/bthorne93/PySM_public>`_
+* PySM 3 `PySM <https://github.com/healpy/pysm>`_
 * healpy
 
-Clone the repository::
+Install with `pip` from Github::
 
     pip install https://github.com/simonsobs/so_pysm_models/archive/master.zip
 
@@ -38,16 +38,16 @@ This repository implements new models for PySM that can be added as additional c
 For example, create and configure a component::
 
     from so_pysm_models import GaussianSynchrotron
-    synchrotron = GaussianSynchrotron(target_nside = 16)
+    synchrotron = GaussianSynchrotron(nside = 16)
     
 Create a PySM sky and add this component::
 
-    sky = pysm.Sky({})
-    sky.add_component("gaussian_synch", gaussian_synch)
+    sky = pysm.Sky(nside=64, component_objects=[synchrotron])
 
 Then get a map at a specific frequency in GHz with standard PySM functionalities::
 
-    m_synch = sky.gaussian_synch(2.3)
+    import astropy.units as u
+    m_synch = sky.get_emission(2.3 * u.GHz)
 
 see example notebooks:
 

@@ -7,15 +7,15 @@ Starting from version 2.0, all input templates have been rotated to Equatorial, 
 data compared to the models included in PySM.
 
 They can be accessed with the function :py:func:`.get_so_models` which works similarly to the `models`
-function available in PySM, and you can mix them, for example::
+function available in PySM, for example::
 
     from so_pysm_models import get_so_models
     from pysm.nominal import models
     from pysm import Sky
-    sky = Sky({
-            "dust" : get_so_models("SO_d0", nside=128),
-            "synchrotron" : models("s1", nside=128)
-    })
+    sky = Sky(component_objects=[get_so_models("SO_d0s", nside=4096)])
+
+Consider that the :py:mod:`so_pysm_models` models are by default in **Equatorial coordinates**, therefore they should not
+be mixed in the same run with standard PySM components which instead are in **Galactic coordinates**. If you need PySM to simultaneously handle inputs in different reference frames, please `open an issue in the PySM repository <https://github.com/healpy/pysm/issues/>`_.
 
 :py:mod:`so_pysm_models` retrieves the templates when needed from NERSC via web accessing:
 http://portal.nersc.gov/project/cmb/so_pysm_models_data/
@@ -31,10 +31,7 @@ You can access the high resolution parameters at :math:`N_{side}` 4096 appending
 
     from so_pysm_models import get_so_models
     from pysm import Sky
-    sky_highres = Sky({
-            "dust" : get_so_models("SO_d0s", nside=4096),
-            "synchrotron" : get_so_models("SO_s0s", nside=4096)
-    })
+    sky_highres = Sky(component_objects=[get_so_models("SO_d0s", nside=4096)])
 
 Whatever the :math:`N_{side}` of the input model and the requested :math:`N_{side}` in :py:func:`.get_so_models`, PySM will automatically use :py:func:`healpy.ud_grade` to adjust the map resolution.
 

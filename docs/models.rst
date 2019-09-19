@@ -101,7 +101,7 @@ Therefore this class should be instantiated choosing the desired line and summed
 For example::
 
     from so_pysm_models import COLines
-    co = COLines(target_nside=16, output_units="uK_CMB", line="10")
+    co = COLines(nside=16, output_units="uK_CMB", line="10")
     pysm_map += bandpass_weight * hp.smoothing(co.signal(), fwhm=fwhm)
 
 Where `bandpass_weight` is the scalar transmission at the line frequency (which is available at `co.line_frequency`), i.e. if the bandpass is a top-hat between 110 and 120 GHz, the "10" line emission should be multiplied by `0.1`.

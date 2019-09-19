@@ -8,7 +8,6 @@ See <https://github.com/simonsobs/map_based_simulations>
 
 **WARNING**: `so_pysm_models`, starting from version 1.0, requires PySM 3, install it from <https://github.com/healpy/pysm>
 This breaking change was required to reduce memory consumption of PySM for TOD simulations.
-Currently **documentation is out of date**, will be updated in August/September 2019.
 
 ## Reference frame
 
