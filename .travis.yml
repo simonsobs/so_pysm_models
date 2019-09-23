@@ -37,8 +37,8 @@ env:
         
         # List runtime dependencies for the package that are available as conda
         # packages here.
-        - CONDA_DEPENDENCIES='healpy numba toml'
-        - CONDA_DEPENDENCIES_DOC='sphinx-astropy numba toml'
+        - CONDA_DEPENDENCIES='healpy numba toml scipy==1.2.1'
+        - CONDA_DEPENDENCIES_DOC='sphinx-astropy numba toml scipy==1.2.1'
         
         # List other runtime dependencies for the package that are available as
         # pip packages here.
