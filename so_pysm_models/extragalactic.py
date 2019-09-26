@@ -1,4 +1,5 @@
 import os.path
+from pathlib import Path
 
 from numba import njit
 import numpy as np
@@ -112,14 +113,18 @@ class WebSkySZ(Model):
     def get_filename(self):
         """Get SZ filenames for a websky version"""
 
-        version = self.version
+
+        path = Path("websky") / self.version
+
+        if self.nside <= 512:
+            path /= "512"
 
         if self.sz_type == "kinetic":
-            filename = "websky/" + version + "/ksz.fits"
+            path = path / "ksz.fits"
         elif self.sz_type == "thermal":
-            filename = "websky/" + version + "/tsz.fits"
+            path = path / "tsz.fits"
 
-        return filename
+        return str(path)
 
     @u.quantity_input
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
