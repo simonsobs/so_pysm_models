@@ -11,7 +11,7 @@ def test_cib(tmp_path):
     nside = 4
     shape = hp.nside2npix(nside)
 
-    path = tmp_path / "websky" / "0.3"
+    path = tmp_path / "websky" / "0.3" / "512"
     path.mkdir(parents=True)
     hp.write_map(path / "cib_0094.fits", np.zeros(shape, dtype=np.float32))
     hp.write_map(path / "cib_0100.fits", np.ones(shape, dtype=np.float32))
