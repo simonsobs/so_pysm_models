@@ -1,4 +1,5 @@
 import os.path
+from pathlib import Path
 
 from numba import njit
 import numpy as np
@@ -76,7 +77,7 @@ class WebSkyCIB(InterpolatingComponent):
                 available_frequencies.append(base_freq + delta_freq)
 
             filenames = {
-                freq: "websky/0.3/cib_{:04d}.fits".format(freq)
+                freq: "websky/0.3/{nside}cib_{:04d}.fits".format(freq, nside="512/" if self.nside<= 512 else "")
                 for freq in available_frequencies
             }
         if self.local_folder is not None:
@@ -112,14 +113,18 @@ class WebSkySZ(Model):
     def get_filename(self):
         """Get SZ filenames for a websky version"""
 
-        version = self.version
+
+        path = Path("websky") / self.version
+
+        if self.nside <= 512:
+            path /= "512"
 
         if self.sz_type == "kinetic":
-            filename = "websky/" + version + "/ksz.fits"
+            path = path / "ksz.fits"
         elif self.sz_type == "thermal":
-            filename = "websky/" + version + "/tsz.fits"
+            path = path / "tsz.fits"
 
-        return filename
+        return str(path)
 
     @u.quantity_input
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:

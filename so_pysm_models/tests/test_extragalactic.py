@@ -11,7 +11,7 @@ def test_cib(tmp_path):
     nside = 4
     shape = hp.nside2npix(nside)
 
-    path = tmp_path / "websky" / "0.3"
+    path = tmp_path / "websky" / "0.3" / "512"
     path.mkdir(parents=True)
     hp.write_map(path / "cib_0094.fits", np.zeros(shape, dtype=np.float32))
     hp.write_map(path / "cib_0100.fits", np.ones(shape, dtype=np.float32))
@@ -33,10 +33,9 @@ def test_ksz(tmp_path, monkeypatch):
     nside = 4
     shape = hp.nside2npix(nside)
 
-    path = tmp_path / "websky" / "0.3"
+    path = tmp_path / "websky" / "0.3" / "512"
     path.mkdir(parents=True)
     hp.write_map(path / "ksz.fits", np.ones(shape, dtype=np.float32))
-    hp.write_map(path / "cib_0100.fits", np.ones(shape, dtype=np.float32))
 
     ksz = WebSkySZ("0.3", sz_type="kinetic", nside=nside)
 
@@ -53,10 +52,9 @@ def test_tsz(tmp_path, monkeypatch):
     nside = 4
     shape = hp.nside2npix(nside)
 
-    path = tmp_path / "websky" / "0.3"
+    path = tmp_path / "websky" / "0.3" / "512"
     path.mkdir(parents=True)
     hp.write_map(path / "tsz.fits", np.ones(shape, dtype=np.float32) * 1e-6)
-    hp.write_map(path / "cib_0100.fits", np.ones(shape, dtype=np.float32))
 
     tsz = WebSkySZ("0.3", sz_type="thermal", nside=nside)
 
