@@ -9,7 +9,7 @@ if __name__ == "__main__":
     out_folder = folder / "512"
 
 
-    for f in folder.glob("cib*.fits") + folder.glob("k*.fits"):
+    for f in folder.glob("[cib,tsz,ksz,kap]*.fits"):
         print(f)
         f = str(f)
         m = hp.read_map(f)
