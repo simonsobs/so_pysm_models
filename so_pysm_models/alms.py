@@ -75,8 +75,8 @@ class PrecomputedAlms(pysm.Model):
 
     @u.quantity_input
     def get_emission(
-        self, freqs: u.GHz, fwhm: [u.arcmin, None] = None, weights=None
-    ) -> u.uK_RJ:
+        self, freqs: u.GHz, fwhm: [u.arcmin, None] = None, weights=None, output_units=u.uK_RJ
+    ):
         """Return map in uK_RJ at given frequency or array of frequencies
 
         Parameters
@@ -111,13 +111,19 @@ class PrecomputedAlms(pysm.Model):
 
             output_map = self.compute_output_map(alm)
 
-        convert_to_uK_RJ = (np.ones(len(freqs), dtype=np.double) * u.uK_CMB).to_value(
-            u.uK_RJ, equivalencies=u.cmb_equivalencies(freqs)
-        )
+        output_units = u.Unit(output_units)
+        assert output_units in [u.uK_RJ, u.uK_CMB]
+        if output_units == u.uK_RJ:
 
-        if len(freqs) == 1:
-            scaling_factor = convert_to_uK_RJ[0]
-        else:
-            scaling_factor = np.trapz(convert_to_uK_RJ * weights, x=freqs.value)
+            convert_to_uK_RJ = (np.ones(len(freqs), dtype=np.double) * u.uK_CMB).to_value(
+                u.uK_RJ, equivalencies=u.cmb_equivalencies(freqs)
+            )
 
-        return output_map.value * scaling_factor << u.uK_RJ
+            if len(freqs) == 1:
+                scaling_factor = convert_to_uK_RJ[0]
+            else:
+                scaling_factor = np.trapz(convert_to_uK_RJ * weights, x=freqs.value)
+
+            return output_map.value * scaling_factor << u.uK_RJ
+        elif output_units == output_map.unit:
+            return output_map
