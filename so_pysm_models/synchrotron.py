@@ -28,7 +28,7 @@ class GaussianSynchrotron(pysm.Model):
         curv=0.0,
         nu_0=23.0,
         seed=None,
-        map_dist=None
+        map_dist=None,
     ):
         """Gaussian synchrotron model
 
@@ -92,8 +92,10 @@ class GaussianSynchrotron(pysm.Model):
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
         """Return map in uK_RJ at given frequency or array of frequencies"""
 
-        nu = check_freq_input(freqs).value
-        assert len(nu) == 1, "Bandpass integration not implemented in Gaussian emissions"
+        nu = check_freq_input(freqs)
+        assert (
+            len(nu) == 1
+        ), "Bandpass integration not implemented in Gaussian emissions"
         nell = 3 * self.nside
         ell = np.arange(nell)
         dl_prefac = 2 * np.pi / ((ell + 0.01) * (ell + 1))
@@ -153,8 +155,12 @@ class GaussianSynchrotron(pysm.Model):
             amp_sync[0] += self.Toffset
             lbreak_TT += 1
         if self.nside > 64:
-            low_pass_filter = filter_utils.create_low_pass_filter(l1=30, l2=60, lmax=64 * 3 - 1)
-            high_pass_filter = filter_utils.create_high_pass_filter(l1=30, l2=60, lmax=nell - 1)
+            low_pass_filter = filter_utils.create_low_pass_filter(
+                l1=30, l2=60, lmax=64 * 3 - 1
+            )
+            high_pass_filter = filter_utils.create_high_pass_filter(
+                l1=30, l2=60, lmax=nell - 1
+            )
             clTT_sync_hpf = clTT_sync * high_pass_filter
             amp_sync[0] = filter_utils.apply_filter(amp_sync[0], low_pass_filter)
             np.random.seed(mseed)

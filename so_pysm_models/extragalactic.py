@@ -77,7 +77,9 @@ class WebSkyCIB(InterpolatingComponent):
                 available_frequencies.append(base_freq + delta_freq)
 
             filenames = {
-                freq: "websky/0.3/{nside}cib_{:04d}.fits".format(freq, nside="512/" if self.nside<= 512 else "")
+                freq: "websky/0.3/{nside}cib_{:04d}.fits".format(
+                    freq, nside="512/" if self.nside <= 512 else ""
+                )
                 for freq in available_frequencies
             }
         if self.local_folder is not None:
@@ -113,7 +115,6 @@ class WebSkySZ(Model):
     def get_filename(self):
         """Get SZ filenames for a websky version"""
 
-
         path = Path("websky") / self.version
 
         if self.nside <= 512:
@@ -129,20 +130,19 @@ class WebSkySZ(Model):
     @u.quantity_input
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
 
-        nu = check_freq_input(freqs)
+        freqs = check_freq_input(freqs)
         weights = normalize_weights(freqs, weights)
 
         # input map is in uK_CMB, we multiply the weights which are
         # in uK_RJ by the conversion factor of uK_CMB->uK_RJ
         # this is the equivalent of
         weights = (weights * u.uK_CMB).to_value(
-            u.uK_RJ, equivalencies=u.cmb_equivalencies(nu)
+            u.uK_RJ, equivalencies=u.cmb_equivalencies(freqs * u.GHz)
         )
 
         is_thermal = self.sz_type == "thermal"
         output = (
-            get_sz_emission_numba(nu.value, weights, self.m.value, is_thermal)
-            << u.uK_RJ
+            get_sz_emission_numba(freqs, weights, self.m.value, is_thermal) << u.uK_RJ
         )
 
         # the output of out is always 2D, (IQU, npix)
