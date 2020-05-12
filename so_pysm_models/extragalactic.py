@@ -161,6 +161,57 @@ def get_sz_emission_numba(freqs, weights, m, is_thermal):
     return output
 
 
+class WebSkyCMBTensor(PrecomputedAlms):
+    def __init__(
+        self,
+        websky_version,
+        nside,
+        precompute_output_map=False,
+        tensor_to_scalar=1e-3,
+        map_dist=None,
+        coord="C",
+    ):
+        """Websky CMB tensor-mode BB component
+
+        Websky-compatible BB component due to primordial tensor perturbations
+        The inputs are simulated with tensor-to-scalar ratio `r` of 1,
+        then scaled by the `tensor_to_scalar` input parameter.
+
+        Parameters
+        ----------
+        websky_version : str
+            Websky version, see the documentation for more information
+        nside : int
+            Desired output HEALPix N_side
+        precompute_output_map : bool
+            If True, the output map is precomputed in the constructor
+        tensor_to_scalar : float
+            Tensor to scalar ratio `r`, ratio between the tensor and the
+            scalar perturbations power spectra
+        map_dist : pysm.MapDist
+            see the PySM documentation
+        """
+
+        filename = utils.RemoteData(coord).get(
+            "websky/{}/tensor_BB_r_1_cl.fits".format(websky_version)
+        )
+        super().__init__(
+            filename,
+            input_units="uK_CMB",
+            input_reference_frequency=None,
+            nside=nside,
+            precompute_output_map=precompute_output_map,
+            has_polarization=True,
+            from_cl=True,
+            from_cl_seed=0,  # always do same realization
+            map_dist=map_dist,
+        )
+        self.tensor_to_scalar = tensor_to_scalar
+
+    def compute_output_map(self, alm):
+        return super().compute_output_map(alm) * np.sqrt(self.tensor_to_scalar)
+
+
 class WebSkyCMB(PrecomputedAlms):
     def __init__(
         self,
