@@ -195,6 +195,7 @@ class WebSkyCMBTensor(PrecomputedAlms):
         filename = utils.RemoteData(coord).get(
             "websky/{}/tensor_BB_r_1_cl.fits".format(websky_version)
         )
+        self.tensor_to_scalar = tensor_to_scalar
         super().__init__(
             filename,
             input_units="uK_CMB",
@@ -206,7 +207,6 @@ class WebSkyCMBTensor(PrecomputedAlms):
             from_cl_seed=0,  # always do same realization
             map_dist=map_dist,
         )
-        self.tensor_to_scalar = tensor_to_scalar
 
     def compute_output_map(self, alm):
         return super().compute_output_map(alm) * np.sqrt(self.tensor_to_scalar)
