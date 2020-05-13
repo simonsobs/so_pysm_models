@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import stats
 import healpy as hp
+import pytest
 from pysm import units as u
 
 from .. import utils
@@ -66,7 +67,8 @@ def test_tsz(tmp_path, monkeypatch):
     np.testing.assert_allclose(np.zeros((2, len(tsz_map[0]))) * u.uK_RJ, tsz_map[1:])
 
 
-def test_cmb_tensor(tmp_path, monkeypatch):
+@pytest.mark.parametrize("tensor_to_scalar", [1, 1e-3])
+def test_cmb_tensor(tmp_path, monkeypatch, tensor_to_scalar):
 
     monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C": [str(tmp_path)]})
     nside = 256
@@ -82,7 +84,7 @@ def test_cmb_tensor(tmp_path, monkeypatch):
 
     hp.write_cl(filename, input_cl, overwrite=True)
 
-    cmb_tensor = WebSkyCMBTensor("0.3", nside=nside, tensor_to_scalar=1)
+    cmb_tensor = WebSkyCMBTensor("0.3", nside=nside, tensor_to_scalar=tensor_to_scalar)
 
     freq = 100 * u.GHz
     cmb_tensor_map = cmb_tensor.get_emission(freq)
@@ -93,6 +95,8 @@ def test_cmb_tensor(tmp_path, monkeypatch):
     cl = hp.anafast(cmb_tensor_map, lmax=lmax)
     # anafast returns results in new ordering
     # TT, EE, BB, TE, EB, TB
-    np.testing.assert_allclose(input_cl[3][200:300], cl[1][200:300], rtol=0.2)
+    np.testing.assert_allclose(
+        input_cl[3][200:300] * tensor_to_scalar, cl[1][200:300], rtol=0.2
+    )
     np.testing.assert_allclose(0, cl[0], rtol=1e-3)
     np.testing.assert_allclose(0, cl[2:], rtol=1e-3, atol=1e-4)
