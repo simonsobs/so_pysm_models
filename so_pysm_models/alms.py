@@ -26,11 +26,13 @@ class PrecomputedAlms(pysm.Model):
         map_dist=None,
     ):
         """Generic component based on Precomputed Alms
+
         Load a set of Alms from a FITS file and generate maps at the requested
         resolution and frequency assuming the CMB black body spectrum.
         A single set of Alms is used for all frequencies requested by PySM,
         consider that PySM expects the output of components to be in uK_RJ.
         See more details at https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/models.html
+
         Parameters
         ----------
         filename : string
@@ -112,6 +114,7 @@ class PrecomputedAlms(pysm.Model):
         output_units=u.uK_RJ,
     ):
         """Return map in uK_RJ at given frequency or array of frequencies
+
         Parameters
         ----------
         freqs : list or ndarray

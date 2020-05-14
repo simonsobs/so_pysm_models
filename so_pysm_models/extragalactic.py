@@ -173,7 +173,7 @@ class WebSkyCMBTensor(PrecomputedAlms):
     ):
         """Websky CMB tensor-mode BB component
 
-        Websky-compatible BB component due to primordial tensor perturbations
+        Websky-compatible unlensed BB component due to primordial tensor perturbations
         The inputs are simulated with tensor-to-scalar ratio `r` of 1,
         then scaled by the `tensor_to_scalar` input parameter.
 
