@@ -227,4 +227,4 @@ The primary CMB is obtained from parameters that match the Websky simulation, na
 
 The theoretical power spectra for the unlensed and lensed CMB are available here https://github.com/ajvanengelen/webskylensing/tree/master/data.  Each is a numpy array of shape `(3, 3, N_l)`, giving the theory power spectrum C_l's in the order ((TT, TE, TB), (ET, EE, EB), (BT, BE, BB)) in units of uK_CMB^2.  They are obtained from the `get_cmb_powerspecta.websky_cmb_spectra` routine in that repository, which serves as a wrapper to CAMB.
 
-The :py:class:`WebSkyCMBTensor` provides the $BB$ spectrum for the Websky cosmology from a model with $r = 1$ (which of course needs to be scaled to whatever actual $r$ value we want to use). This component is not lensed and we consider only $C_\ell^{BB}$.
+The :py:class:`WebSkyCMBTensor` provides the $BB$ spectrum for the Websky cosmology from a model with $r = 1$ (which of course needs to be scaled to whatever actual $r$ value we want to use). This component is not lensed and we consider only $C_\ell^{BB}$, temperature fluctuations from tensor modes are not included.
