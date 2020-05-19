@@ -1,9 +1,11 @@
 import numpy as np
+from scipy import stats
 import healpy as hp
+import pytest
 from pysm import units as u
 
 from .. import utils
-from .. import WebSkyCIB, WebSkySZ
+from .. import WebSkyCIB, WebSkySZ, WebSkyCMBTensor
 
 
 def test_cib(tmp_path):
@@ -29,7 +31,7 @@ def test_cib(tmp_path):
 
 def test_ksz(tmp_path, monkeypatch):
 
-    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C":[str(tmp_path)]})
+    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C": [str(tmp_path)]})
     nside = 4
     shape = hp.nside2npix(nside)
 
@@ -48,7 +50,7 @@ def test_ksz(tmp_path, monkeypatch):
 
 def test_tsz(tmp_path, monkeypatch):
 
-    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C":[str(tmp_path)]})
+    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C": [str(tmp_path)]})
     nside = 4
     shape = hp.nside2npix(nside)
 
@@ -63,3 +65,38 @@ def test_tsz(tmp_path, monkeypatch):
         np.ones(len(tsz_map[0])) * -3.193671 * u.uK_RJ, tsz_map[0], rtol=1e-4
     )
     np.testing.assert_allclose(np.zeros((2, len(tsz_map[0]))) * u.uK_RJ, tsz_map[1:])
+
+
+@pytest.mark.parametrize("tensor_to_scalar", [1, 1e-3])
+def test_cmb_tensor(tmp_path, monkeypatch, tensor_to_scalar):
+
+    monkeypatch.setattr(utils, "PREDEFINED_DATA_FOLDERS", {"C": [str(tmp_path)]})
+    nside = 256
+    lmax = 512
+
+    path = tmp_path / "websky" / "0.3"
+    path.mkdir(parents=True)
+
+    input_cl = np.zeros((6, lmax + 1), dtype=np.double)
+    # using healpy old ordering TT, TE, TB, EE, EB, BB
+    input_cl[3] = 1e5 * stats.norm.pdf(np.arange(lmax + 1), 250, 30)  # EE
+    filename = path / "tensor_BB_r_1_cl.fits"
+
+    hp.write_cl(filename, input_cl, overwrite=True)
+
+    cmb_tensor = WebSkyCMBTensor("0.3", nside=nside, tensor_to_scalar=tensor_to_scalar)
+
+    freq = 100 * u.GHz
+    cmb_tensor_map = cmb_tensor.get_emission(freq)
+    cmb_tensor_map = cmb_tensor_map.to(
+        u.uK_CMB, equivalencies=u.cmb_equivalencies(freq)
+    )
+
+    cl = hp.anafast(cmb_tensor_map, lmax=lmax)
+    # anafast returns results in new ordering
+    # TT, EE, BB, TE, EB, TB
+    np.testing.assert_allclose(
+        input_cl[3][200:300] * tensor_to_scalar, cl[1][200:300], rtol=0.2
+    )
+    np.testing.assert_allclose(0, cl[0], rtol=1e-3)
+    np.testing.assert_allclose(0, cl[2:], rtol=1e-3, atol=1e-4)

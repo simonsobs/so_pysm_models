@@ -8,3 +8,5 @@ quaternionarray
 https://github.com/healpy/pysm/archive/master.zip
 https://github.com/simonsobs/so_pysm_models/archive/master.zip
 git+git://github.com/simonsobs/sotodlib.git@aca85843b70b0c6ebac031aa48fff47f93ed6661
+importlib_resources
+sphinx-math-dollar

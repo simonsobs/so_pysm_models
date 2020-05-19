@@ -1,12 +1,12 @@
 import os.path
 
 import numpy as np
+import scipy.stats as stats
 import healpy as hp
 
 import pytest
 from astropy.tests.helper import assert_quantity_allclose
 
-import pysm
 import pysm.units as u
 
 from .. import PrecomputedAlms
@@ -58,7 +58,8 @@ def test_precomputed_alms(setup):
 
     for freq in freqs:
         np.testing.assert_allclose(
-            precomputed_alms.get_emission(freq), test_map_K_CMB.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq))
+            precomputed_alms.get_emission(freq),
+            test_map_K_CMB.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq)),
         )
 
 
@@ -76,5 +77,38 @@ def test_precomputed_alms_K_CMB(setup):
 
     for freq in freqs:
         np.testing.assert_allclose(
-            precomputed_alms.get_emission(freq), test_map.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq))
+            precomputed_alms.get_emission(freq),
+            test_map.to(u.K_RJ, equivalencies=u.cmb_equivalencies(freq)),
         )
+
+
+def test_from_cl(tmpdir):
+    nside = 256
+    lmax = 512
+
+    folder = tmpdir.mkdir("cls")
+
+    filename = os.path.join(str(folder), "cls.fits")
+
+    input_cl = np.zeros((6, lmax + 1), dtype=np.double)
+    # using healpy old ordering TT, TE, TB, EE, EB, BB
+    input_cl[3] = 1e5 * stats.norm.pdf(np.arange(lmax + 1), 250, 30)  # EE
+    hp.write_cl(filename, input_cl, overwrite=True)
+
+    precomputed_alms = PrecomputedAlms(
+        filename=filename,
+        nside=nside,
+        input_units="K_CMB",
+        from_cl=True,
+        from_cl_seed=100,
+    )
+    freq = 100 * u.GHz
+    m = precomputed_alms.get_emission(freq)
+    m = m.to(u.K_CMB, equivalencies=u.cmb_equivalencies(freq))
+
+    cl = hp.anafast(m, lmax=lmax)
+    # anafast returns results in new ordering
+    # TT, EE, BB, TE, EB, TB
+    np.testing.assert_allclose(input_cl[3][200:300], cl[1][200:300], rtol=.2)
+    np.testing.assert_allclose(0, cl[0], rtol=1e-3)
+    np.testing.assert_allclose(0, cl[2:], rtol=1e-3, atol=1e-4)

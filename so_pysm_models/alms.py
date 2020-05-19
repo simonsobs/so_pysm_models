@@ -19,16 +19,20 @@ class PrecomputedAlms(pysm.Model):
         nside=None,
         target_shape=None,
         target_wcs=None,
+        from_cl=False,
+        from_cl_seed=None,
         precompute_output_map=True,
         has_polarization=True,
         map_dist=None,
     ):
         """Generic component based on Precomputed Alms
+
         Load a set of Alms from a FITS file and generate maps at the requested
         resolution and frequency assuming the CMB black body spectrum.
         A single set of Alms is used for all frequencies requested by PySM,
         consider that PySM expects the output of components to be in uK_RJ.
         See more details at https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/models.html
+
         Parameters
         ----------
         filename : string
@@ -39,6 +43,12 @@ class PrecomputedAlms(pysm.Model):
             If input units are K_RJ or Jysr, the reference frequency
         nside : int
             HEALPix NSIDE of the output maps
+        from_cl : bool
+            If True, the input file contains C_ell instead of a_lm
+        from_cl_seed : int
+            Seed set just before synalm to simulate the alms from the C_ell,
+            necessary to set it in order to get the same input map for different runs
+            only used if `from_cl` is True
         precompute_output_map : bool
             If True (default), Alms are transformed into a map in the constructor,
             if False, the object only stores the Alms and generate the map at each
@@ -56,9 +66,18 @@ class PrecomputedAlms(pysm.Model):
         self.input_units = u.Unit(input_units)
         self.has_polarization = has_polarization
 
-        alm = np.complex128(
-            hp.read_alm(self.filename, hdu=(1, 2, 3) if self.has_polarization else 1)
-        )
+        if from_cl:
+            np.random.seed(from_cl_seed)
+            cl = hp.read_cl(self.filename)
+            if not self.has_polarization and cl.ndim > 1:
+                cl = cl[0]
+            alm = hp.synalm(cl, verbose=False)
+        else:
+            alm = np.complex128(
+                hp.read_alm(
+                    self.filename, hdu=(1, 2, 3) if self.has_polarization else 1
+                )
+            )
 
         self.equivalencies = (
             None
@@ -95,6 +114,7 @@ class PrecomputedAlms(pysm.Model):
         output_units=u.uK_RJ,
     ):
         """Return map in uK_RJ at given frequency or array of frequencies
+
         Parameters
         ----------
         freqs : list or ndarray
