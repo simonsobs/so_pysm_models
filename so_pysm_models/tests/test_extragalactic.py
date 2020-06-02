@@ -78,8 +78,7 @@ def test_cmb_tensor(tmp_path, monkeypatch, tensor_to_scalar):
     path.mkdir(parents=True)
 
     input_cl = np.zeros((6, lmax + 1), dtype=np.double)
-    # using healpy old ordering TT, TE, TB, EE, EB, BB
-    input_cl[3] = 1e5 * stats.norm.pdf(np.arange(lmax + 1), 250, 30)  # EE
+    input_cl[1] = 1e5 * stats.norm.pdf(np.arange(lmax + 1), 250, 30)  # EE
     filename = path / "tensor_BB_r_1_cl.fits"
 
     hp.write_cl(filename, input_cl, overwrite=True)
@@ -96,7 +95,7 @@ def test_cmb_tensor(tmp_path, monkeypatch, tensor_to_scalar):
     # anafast returns results in new ordering
     # TT, EE, BB, TE, EB, TB
     np.testing.assert_allclose(
-        input_cl[3][200:300] * tensor_to_scalar, cl[1][200:300], rtol=0.2
+        input_cl[1][200:300] * tensor_to_scalar, cl[1][200:300], rtol=0.2
     )
     np.testing.assert_allclose(0, cl[0], rtol=1e-3)
     np.testing.assert_allclose(0, cl[2:], rtol=1e-3, atol=1e-4)
