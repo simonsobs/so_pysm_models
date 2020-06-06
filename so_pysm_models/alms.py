@@ -6,8 +6,12 @@ try:
 except:
     pass
 
-import pysm
-from pysm import units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+    import pysm3 as pysm
+except ImportError:
+    import pysm.units as u
+    import pysm
 
 
 class PrecomputedAlms(pysm.Model):

@@ -2,7 +2,10 @@ import numpy as np
 from scipy import stats
 import healpy as hp
 import pytest
-from pysm import units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+except ImportError:
+    import pysm.units as u
 
 from .. import utils
 from .. import WebSkyCIB, WebSkySZ, WebSkyCMBTensor

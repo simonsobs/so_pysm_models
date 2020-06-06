@@ -2,8 +2,12 @@ import numpy as np
 
 import healpy as hp
 
-import pysm.units as u
-import pysm
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+    import pysm3 as pysm
+except ImportError:
+    import pysm.units as u
+    import pysm
 
 from .utils import RemoteData
 
