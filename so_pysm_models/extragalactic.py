@@ -4,10 +4,13 @@ from pathlib import Path
 from numba import njit
 import numpy as np
 
-from pysm import InterpolatingComponent, Model, CMBMap
-from pysm import units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+    import pysm3 as pysm
+except ImportError:
+    import pysm.units as u
+    import pysm
 
-from pysm.utils import normalize_weights, trapz_step_inplace, check_freq_input
 from .alms import PrecomputedAlms
 from . import utils
 
@@ -33,7 +36,7 @@ def y2uK_CMB(nu):
     return 1e6 * Tcmb * (x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4)
 
 
-class WebSkyCIB(InterpolatingComponent):
+class WebSkyCIB(pysm.InterpolatingComponent):
     """PySM component interpolating between precomputed maps"""
 
     def __init__(
@@ -93,7 +96,7 @@ class WebSkyCIB(InterpolatingComponent):
         return self.read_map_file(freq, filename)
 
 
-class WebSkySZ(Model):
+class WebSkySZ(pysm.Model):
     def __init__(
         self,
         version="0.3",
@@ -130,8 +133,8 @@ class WebSkySZ(Model):
     @u.quantity_input
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
 
-        freqs = check_freq_input(freqs)
-        weights = normalize_weights(freqs, weights)
+        freqs = pysm.check_freq_input(freqs)
+        weights = pysm.normalize_weights(freqs, weights)
 
         # input map is in uK_CMB, we multiply the weights which are
         # in uK_RJ by the conversion factor of uK_CMB->uK_RJ
@@ -157,7 +160,7 @@ def get_sz_emission_numba(freqs, weights, m, is_thermal):
             signal = m * m.dtype.type(y2uK_CMB(freqs[i]))
         else:
             signal = m
-        trapz_step_inplace(freqs, weights, i, signal, output[0])
+        pysm.utils.trapz_step_inplace(freqs, weights, i, signal, output[0])
     return output
 
 
@@ -239,7 +242,7 @@ class WebSkyCMB(PrecomputedAlms):
         )
 
 
-class WebSkyCMBMap(CMBMap):
+class WebSkyCMBMap(pysm.CMBMap):
     def __init__(
         self,
         websky_version,

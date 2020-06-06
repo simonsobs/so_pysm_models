@@ -7,7 +7,10 @@ import healpy as hp
 import pytest
 from astropy.tests.helper import assert_quantity_allclose
 
-import pysm.units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+except ImportError:
+    import pysm.units as u
 
 from .. import PrecomputedAlms
 

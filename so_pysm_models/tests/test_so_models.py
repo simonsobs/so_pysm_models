@@ -1,6 +1,12 @@
 import numpy as np
 
-import pysm.units as u
+try:  # PySM >= 3.2.1
+    import pysm3 as pysm
+    import pysm3.units as u
+except ImportError:
+    import pysm.units as u
+    import pysm
+
 from .. import get_so_models
 from astropy.tests.helper import assert_quantity_allclose
 import pytest
@@ -27,9 +33,8 @@ def test_get_so_models(model_tag):
 
     Only check that we can access the 512 version of the template
     and that the result has no NaN"""
-    from pysm import Sky
 
-    sky = Sky(
+    sky = pysm.Sky(
         nside=128, component_objects=[get_so_models(model_tag, nside=128, coord="G")]
     )
     emission = sky.get_emission(freq=100 * u.GHz)

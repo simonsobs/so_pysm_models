@@ -5,7 +5,10 @@ from astropy.utils.data import get_pkg_data_filename
 from .. import GaussianDust
 from astropy.tests.helper import assert_quantity_allclose
 
-import pysm.units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+except ImportError:
+    import pysm.units as u
 
 
 def test_gaussian_dust():

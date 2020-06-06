@@ -2,7 +2,10 @@ import numpy as np
 import healpy as hp
 
 from astropy.utils.data import get_pkg_data_filename
-import pysm.units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+except ImportError:
+    import pysm.units as u
 
 from .. import PrecomputedAlms
 from astropy.tests.helper import assert_quantity_allclose
