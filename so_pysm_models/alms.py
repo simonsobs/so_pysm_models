@@ -14,7 +14,7 @@ except ImportError:
     import pysm
 
 
-class PrecomputedAlms(pysm.Model):
+class PrecomputedAlms(object):
     def __init__(
         self,
         filename,
@@ -63,7 +63,7 @@ class PrecomputedAlms(pysm.Model):
             Default: True
         """
 
-        super().__init__(nside=nside, map_dist=map_dist)
+        self.nside = nside
         self.shape = target_shape
         self.wcs = target_wcs
         self.filename = filename
