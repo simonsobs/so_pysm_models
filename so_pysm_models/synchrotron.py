@@ -7,9 +7,12 @@ import math
 from . import laws
 from . import filter_utils
 
-import pysm
-from pysm import check_freq_input
-import pysm.units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+    import pysm3 as pysm
+except ImportError:
+    import pysm.units as u
+    import pysm
 
 
 class GaussianSynchrotron(pysm.Model):
@@ -92,7 +95,7 @@ class GaussianSynchrotron(pysm.Model):
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
         """Return map in uK_RJ at given frequency or array of frequencies"""
 
-        nu = check_freq_input(freqs)
+        nu = pysm.check_freq_input(freqs)
         assert (
             len(nu) == 1
         ), "Bandpass integration not implemented in Gaussian emissions"

@@ -1,7 +1,11 @@
-import pysm
-import pysm.units as u
-from .utils import RemoteData
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+    import pysm3 as pysm
+except ImportError:
+    import pysm.units as u
+    import pysm
 
+from .utils import RemoteData
 
 def get_so_models(key, nside, map_dist=None, coord="C"):
 

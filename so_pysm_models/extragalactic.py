@@ -4,10 +4,13 @@ from pathlib import Path
 from numba import njit
 import numpy as np
 
-from pysm import InterpolatingComponent, Model, CMBMap
-from pysm import units as u
+try:  # PySM >= 3.2.1
+    import pysm3.units as u
+    import pysm3 as pysm
+except ImportError:
+    import pysm.units as u
+    import pysm
 
-from pysm.utils import normalize_weights, trapz_step_inplace, check_freq_input
 from .alms import PrecomputedAlms
 from . import utils
 
@@ -33,7 +36,7 @@ def y2uK_CMB(nu):
     return 1e6 * Tcmb * (x * (np.exp(x) + 1) / (np.exp(x) - 1) - 4)
 
 
-class WebSkyCIB(InterpolatingComponent):
+class WebSkyCIB(pysm.InterpolatingComponent):
     """PySM component interpolating between precomputed maps"""
 
     def __init__(
@@ -93,7 +96,7 @@ class WebSkyCIB(InterpolatingComponent):
         return self.read_map_file(freq, filename)
 
 
-class WebSkySZ(Model):
+class WebSkySZ(pysm.Model):
     def __init__(
         self,
         version="0.3",
@@ -130,8 +133,8 @@ class WebSkySZ(Model):
     @u.quantity_input
     def get_emission(self, freqs: u.GHz, weights=None) -> u.uK_RJ:
 
-        freqs = check_freq_input(freqs)
-        weights = normalize_weights(freqs, weights)
+        freqs = pysm.check_freq_input(freqs)
+        weights = pysm.normalize_weights(freqs, weights)
 
         # input map is in uK_CMB, we multiply the weights which are
         # in uK_RJ by the conversion factor of uK_CMB->uK_RJ
@@ -157,8 +160,59 @@ def get_sz_emission_numba(freqs, weights, m, is_thermal):
             signal = m * m.dtype.type(y2uK_CMB(freqs[i]))
         else:
             signal = m
-        trapz_step_inplace(freqs, weights, i, signal, output[0])
+        pysm.utils.trapz_step_inplace(freqs, weights, i, signal, output[0])
     return output
+
+
+class WebSkyCMBTensor(PrecomputedAlms):
+    def __init__(
+        self,
+        websky_version,
+        nside,
+        precompute_output_map=False,
+        tensor_to_scalar=1e-3,
+        map_dist=None,
+        coord="C",
+    ):
+        """Websky CMB tensor-mode BB component
+
+        Websky-compatible unlensed BB component due to primordial tensor perturbations
+        The inputs are simulated with tensor-to-scalar ratio `r` of 1,
+        then scaled by the `tensor_to_scalar` input parameter.
+
+        Parameters
+        ----------
+        websky_version : str
+            Websky version, see the documentation for more information
+        nside : int
+            Desired output HEALPix N_side
+        precompute_output_map : bool
+            If True, the output map is precomputed in the constructor
+        tensor_to_scalar : float
+            Tensor to scalar ratio `r`, ratio between the tensor and the
+            scalar perturbations power spectra
+        map_dist : pysm.MapDist
+            see the PySM documentation
+        """
+
+        filename = utils.RemoteData(coord).get(
+            "websky/{}/tensor_BB_r_1_cl.fits".format(websky_version)
+        )
+        self.tensor_to_scalar = tensor_to_scalar
+        super().__init__(
+            filename,
+            input_units="uK_CMB",
+            input_reference_frequency=None,
+            nside=nside,
+            precompute_output_map=precompute_output_map,
+            has_polarization=True,
+            from_cl=True,
+            from_cl_seed=0,  # always do same realization
+            map_dist=map_dist,
+        )
+
+    def compute_output_map(self, alm):
+        return super().compute_output_map(alm) * np.sqrt(self.tensor_to_scalar)
 
 
 class WebSkyCMB(PrecomputedAlms):
@@ -188,7 +242,7 @@ class WebSkyCMB(PrecomputedAlms):
         )
 
 
-class WebSkyCMBMap(CMBMap):
+class WebSkyCMBMap(pysm.CMBMap):
     def __init__(
         self,
         websky_version,
