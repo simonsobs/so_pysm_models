@@ -196,7 +196,7 @@ class WebSkyCMBTensor(PrecomputedAlms):
         """
 
         filename = utils.RemoteData(coord).get(
-            "websky/{}/tensor_BB_r_1_cl.fits".format(websky_version)
+            "websky/{}/tensor_cl_r1_nt0.fits".format(websky_version)
         )
         self.tensor_to_scalar = tensor_to_scalar
         super().__init__(

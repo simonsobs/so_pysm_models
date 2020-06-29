@@ -75,8 +75,8 @@ class PrecomputedAlms(object):
             cl = hp.read_cl(self.filename)
             if not self.has_polarization and cl.ndim > 1:
                 cl = cl[0]
-            # using healpy new ordering TT, EE, BB, TE, TB, EB
-            alm = hp.synalm(cl, new=True, verbose=False)
+            # using healpy old ordering TT, TE, TB, EE, EB, BB
+            alm = hp.synalm(cl, new=False, verbose=False)
         else:
             alm = np.complex128(
                 hp.read_alm(
