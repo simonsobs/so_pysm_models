@@ -227,6 +227,10 @@ The primary CMB is obtained from parameters that match the Websky simulation, na
 
 The theoretical power spectra for the unlensed and lensed CMB are available here https://github.com/ajvanengelen/webskylensing/tree/master/data.  Each is a numpy array of shape `(3, 3, N_l)`, giving the theory power spectrum C_l's in the order ((TT, TE, TB), (ET, EE, EB), (BT, BE, BB)) in units of uK_CMB^2.  They are obtained from the `get_cmb_powerspecta.websky_cmb_spectra` routine in that repository, which serves as a wrapper to CAMB.
 
-The :py:class:`WebSkyCMBTensor` provides the $BB$ spectrum for the Websky cosmology from a model with $r = 1$ (which of course needs to be scaled to whatever actual $r$ value we want to use). This component is not lensed and we consider only $C_\ell^{BB}$, temperature fluctuations from tensor modes are not included.
+The :py:class:`WebSkyCMBTensor` provides the $BB$ spectrum for the Websky cosmology from a model with $r = 1$ (which of course needs to be scaled to whatever actual $r$ value we want to use). This component is not lensed.
 The tensor spectral index ($n_t$) in CAMB was set to 0.
-The $C_\ell^{BB}$ from CAMB has power only up to $\ell = 600$, however, given that the primordial BB signal is suppressed on scales smaller than the horizon scale at decoupling this should not matter in practice, for more details see `this Github issue <https://github.com/simonsobs/so_pysm_models/issues/48#issuecomment-628397058>`_
+   
+The $C_\ell$ from CAMB has power only up to $\ell = 600$, however, given that the primordial BB signal is suppressed on scales smaller than the horizon scale at decoupling this should not matter in practice, for more details see `this Github issue <https://github.com/simonsobs/so_pysm_models/issues/48#issuecomment-628397058>`_
+
+.. image:: websky_tensor_plot.png
+   :width: 600
