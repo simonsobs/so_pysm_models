@@ -56,7 +56,6 @@ class WebSkyCIB(pysm.InterpolatingComponent):
             input_units,
             nside,
             interpolation_kind,
-            has_polarization=False,
             map_dist=map_dist,
             verbose=verbose,
         )
