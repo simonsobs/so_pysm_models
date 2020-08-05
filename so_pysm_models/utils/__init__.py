@@ -47,7 +47,6 @@ class RemoteData:
         for folder in self.data_folders:
             full_path = os.path.join(folder, filename)
             if os.path.exists(full_path):
-                warnings.warn(f"Access data from {full_path}")
                 return full_path
         with data.conf.set_temp("dataurl", self.data_url), data.conf.set_temp(
             "remote_timeout", 30
