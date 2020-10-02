@@ -97,13 +97,22 @@ class PrecomputedAlms(object):
 
     def compute_output_map(self, alm):
 
+        lmax = hp.Alm.getlmax(alm.shape[-1]) # we assume mmax = lmax
         if self.nside is None:
             assert (self.shape is not None) and (self.wcs is not None)
             n_comp = 3 if self.has_polarization else 1
             output_map = enmap.empty((n_comp,) + self.shape[-2:], self.wcs)
             curvedsky.alm2map(alm, output_map, spin=[0, 2], verbose=True)
         elif self.nside is not None:
-            output_map = hp.alm2map(alm, self.nside)
+            if lmax > 3*self.nside-1:
+                clip = np.ones(3*self.nside)
+                if alm.ndim == 1:
+                    alm_clipped = hp.almxfl(alm, clip)
+                else:
+                    alm_clipped = [hp.almxfl(each, clip) for each in alm]
+            else:
+                alm_clipped = alm
+            output_map = hp.alm2map(alm_clipped, self.nside)
         else:
             raise ValueError("You must specify either nside or both of shape and wcs")
         return (output_map << self.input_units).to(
