@@ -48,7 +48,8 @@ class PrecomputedAlms(object):
         nside : int
             HEALPix NSIDE of the output maps
         from_cl : bool
-            If True, the input file contains C_ell instead of a_lm
+            If True, the input file contains C_ell instead of a_lm,
+            they should provided with the healpy old ordering TT, TE, TB, EE, EB, BB, sorry.
         from_cl_seed : int
             Seed set just before synalm to simulate the alms from the C_ell,
             necessary to set it in order to get the same input map for different runs
