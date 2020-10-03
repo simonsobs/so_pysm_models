@@ -1,0 +1,2 @@
+not sure why but only zip files are packaged into the package by build.
+tried with fits or gz but they are not.
