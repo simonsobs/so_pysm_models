@@ -86,7 +86,7 @@ def test_cmb_tensor(tmp_path, monkeypatch, tensor_to_scalar):
 
     input_cl = np.zeros((6, lmax + 1), dtype=np.double)
     input_cl[1] = 1e5 * stats.norm.pdf(np.arange(lmax + 1), 250, 30)  # EE
-    filename = path / "tensor_BB_r_1_cl.fits"
+    filename = path / "tensor_cl_r1_nt0.fits"
 
     hp.write_cl(filename, input_cl, overwrite=True)
 
@@ -98,11 +98,11 @@ def test_cmb_tensor(tmp_path, monkeypatch, tensor_to_scalar):
         u.uK_CMB, equivalencies=u.cmb_equivalencies(freq)
     )
 
-    cl = hp.anafast(cmb_tensor_map, lmax=lmax)
+    cl = hp.anafast(cmb_tensor_map, use_pixel_weights=True, lmax=lmax)
     # anafast returns results in new ordering
     # TT, EE, BB, TE, EB, TB
     np.testing.assert_allclose(
-        input_cl[1][200:300] * tensor_to_scalar, cl[1][200:300], rtol=0.2
+        input_cl[5][200:300] * tensor_to_scalar, cl[2][200:300], rtol=0.2
     )
-    np.testing.assert_allclose(0, cl[0], rtol=1e-3)
-    np.testing.assert_allclose(0, cl[2:], rtol=1e-3, atol=1e-4)
+    np.testing.assert_allclose(0, cl[:2], rtol=1e-3)
+    np.testing.assert_allclose(0, cl[3:], rtol=1e-3, atol=1e-4)
