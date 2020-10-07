@@ -27,8 +27,12 @@ def test_cib(tmp_path):
 
     interpolated_map = interp.get_emission(97 * u.GHz)
     np.testing.assert_allclose(
-        np.interp(97, [94, 100], [0, 1]) * np.ones((1, shape)) * u.uK_RJ,
-        interpolated_map,
+        np.interp(97, [94, 100], [0, 1]) * np.ones(shape) * u.uK_RJ,
+        interpolated_map[0],
+    )
+    np.testing.assert_allclose(
+        0 * u.uK_RJ,
+        interpolated_map[1:],
     )
 
 
