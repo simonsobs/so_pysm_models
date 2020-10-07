@@ -37,6 +37,10 @@ class PrecomputedAlms(object):
         consider that PySM expects the output of components to be in uK_RJ.
         See more details at https://so-pysm-models.readthedocs.io/en/latest/so_pysm_models/models.html
 
+        Also note that the Alms are clipped to 3*nside-1 to avoid
+        artifacts from high-ell components which cannot be properly represented
+        by a low-nside map.
+
         Parameters
         ----------
         filename : string
