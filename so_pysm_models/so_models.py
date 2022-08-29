@@ -39,8 +39,8 @@ def get_so_models(key, nside, map_dist=None, coord="C"):
             freq_ref_I = 353 * u.GHz
         model = pysm.ModifiedBlackBody(
             dust_T,
-            mapQ=remote_data.get("dust_Q_ns{}.fits".format(nside_template)),
-            mapU=remote_data.get("dust_U_ns{}.fits".format(nside_template)),
+            map_Q=remote_data.get("dust_Q_ns{}.fits".format(nside_template)),
+            map_U=remote_data.get("dust_U_ns{}.fits".format(nside_template)),
             freq_ref_I=freq_ref_I,
             freq_ref_P=353 * u.GHz,
             map_mbb_index=map_mbb_index,
