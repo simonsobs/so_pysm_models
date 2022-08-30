@@ -82,6 +82,7 @@ def get_so_models(key, nside, map_dist=None, coord="C"):
     elif key == "SO_f0":
         model = pysm.PowerLaw(
             map_I=remote_data.get("freefree_T_ns{}.fits".format(nside_template)),
+            has_polarization=False,
             freq_ref_I=30 * u.GHz,
             map_pl_index=-2.14,
             nside=nside,
